@@ -1,0 +1,6 @@
+{
+  "directory": ["src/store", "src/api", "src/hooks", "src/components", "src/features"],
+  "delete": true,
+  "structure": "flat",
+  "barrelName": "index"
+}

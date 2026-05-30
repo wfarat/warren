@@ -1,75 +1,39 @@
-import path from "node:path";
-
-import js from "@eslint/js";
-import { defineConfig } from "eslint/config";
-import { includeIgnoreFile } from "@eslint/compat";
-import { configs, plugins } from "eslint-config-airbnb-extended";
-import { rules as prettierConfigRules } from "eslint-config-prettier";
-import prettierPlugin from "eslint-plugin-prettier";
-
-const gitignorePath = path.resolve(".", ".gitignore");
-
-const jsConfig = defineConfig([
-  // ESLint recommended config
-  {
-    name: "js/config",
-    ...js.configs.recommended,
-  },
-  // Stylistic plugin
-  plugins.stylistic,
-  // Import X plugin
-  plugins.importX,
-  // Airbnb base recommended config
-  ...configs.base.recommended,
-]);
-
-const reactConfig = defineConfig([
-  // React plugin
-  plugins.react,
-  // React hooks plugin
-  plugins.reactHooks,
-  // React JSX A11y plugin
-  plugins.reactA11y,
-  // Airbnb React recommended config
-  ...configs.react.recommended,
-]);
-
-const typescriptConfig = defineConfig([
-  // TypeScript ESLint plugin
-  plugins.typescriptEslint,
-  // Airbnb base TypeScript config
-  ...configs.base.typescript,
-  // Airbnb React TypeScript config
-  ...configs.react.typescript,
-]);
-
-const prettierConfig = defineConfig([
-  // Prettier plugin
-  {
-    name: "prettier/plugin/config",
-    plugins: {
-      prettier: prettierPlugin,
-    },
-  },
-  // Prettier config
-  {
-    name: "prettier/config",
-    rules: {
-      ...prettierConfigRules,
-      "prettier/prettier": "error",
-    },
-  },
-]);
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+import { defineConfig, includeIgnoreFile } from 'eslint/config';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import stylistic from '@stylistic/eslint-plugin';
 
 export default defineConfig([
-  // Ignore files and folders listed in .gitignore
-  includeIgnoreFile(gitignorePath),
-  // JavaScript config
-  ...jsConfig,
-  // React config
-  ...reactConfig,
-  // TypeScript config
-  ...typescriptConfig,
-  // Prettier config
-  ...prettierConfig,
+  includeIgnoreFile('.gitignore', { gitignoreResolution: true }),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs['recommended-latest'],
+      reactRefresh.configs.vite,
+      eslintPluginPrettierRecommended,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      '@stylistic': stylistic,
+    },
+    rules: {
+      '@stylistic/padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: '*', next: ['function', 'class'] },
+        { blankLine: 'always', prev: ['const', 'let', 'var'], next: ['return', 'if', 'function'] },
+        { blankLine: 'always', prev: ['type', 'interface', 'import'], next: '*' },
+        { blankLine: 'any', prev: 'import', next: 'import' },
+      ],
+      '@stylistic/max-len': ['error', { code: 160 }],
+    },
+  },
 ]);
