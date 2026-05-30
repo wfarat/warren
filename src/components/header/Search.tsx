@@ -1,8 +1,11 @@
 import SearchIcon from '@/assets/icons/Search.svg?react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Fuse from 'fuse.js';
+import { twMerge } from 'tailwind-merge';
 
-export function Search() {
+interface SearchProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+export function Search({ className }: SearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const dummyData = [
@@ -25,7 +28,7 @@ export function Search() {
   ].join(' ');
 
   return (
-    <div className="relative w-96 z-20">
+    <div className={twMerge('relative w-96 z-20', className)}>
       {/* 1. The Search Input Container */}
       <div className={inputContainerClasses}>
         <input

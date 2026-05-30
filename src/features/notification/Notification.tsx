@@ -30,6 +30,7 @@ export function Notification({ view, className }: NotificationProps) {
       hidden={!notification.visible}
       message={notification.message}
       retryCallback={handleRetry}
+      showRetry={retryCallback !== undefined}
       handleClose={handleClose}
     />
   );

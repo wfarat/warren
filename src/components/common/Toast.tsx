@@ -39,6 +39,7 @@ type ToastProps = React.HTMLAttributes<HTMLDivElement> &
     message: string;
     retryCallback?: () => void;
     handleClose: () => void;
+    showRetry?: boolean;
   };
 
 export function Toast({
@@ -48,6 +49,7 @@ export function Toast({
   retryCallback,
   handleClose,
   className,
+  showRetry,
   ...props
 }: ToastProps) {
   const handleRetry = () => {
@@ -70,7 +72,7 @@ export function Toast({
         {type === 'success' ? 'Success!' : 'Oops!'}
       </span>
       <p className="text-white text-sm sm:mr-4">{message}</p>
-      {retryCallback && (
+      {showRetry && (
         <Button
           onClick={handleRetry}
           theme="dark"
