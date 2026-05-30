@@ -1,5 +1,5 @@
-import { useAppDispatch, useAppSelector } from '../store';
-import { selectLocation, setError, setSuccess, setUserLocation } from '../features';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { selectLocation, setError, setSuccess, setUserLocation } from '@/features';
 import { useCallback } from 'react';
 
 export function useLocation() {

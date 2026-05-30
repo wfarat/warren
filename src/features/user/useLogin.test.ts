@@ -1,10 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, type Mocked, vi } from 'vitest';
 import { useLogin } from './useLogin';
-import { useAppDispatch } from 'store';
+import { useAppDispatch } from '@/store';
 import { signInWithPopup, signOut, type User, type UserCredential } from 'firebase/auth';
-import { clearUser, setUser } from './userSlice';
-import { setError, setSuccess } from '../notification';
+import { clearUser, setError, setSuccess, setUser } from '@/features';
 
 vi.mock('store', () => ({
   useAppDispatch: vi.fn(),

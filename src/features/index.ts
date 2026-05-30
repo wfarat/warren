@@ -5,7 +5,6 @@
 export * from './notification/Notification';
 export * from './notification/notificationSelectors';
 export * from './notification/notificationSlice';
-export * from './user/useLogin.test';
 export * from './user/useLogin';
 export * from './user/userSelectors';
 export * from './user/userSlice';

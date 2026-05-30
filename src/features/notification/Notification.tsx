@@ -1,8 +1,8 @@
-import { useAppDispatch, useAppSelector } from 'store';
-import { clearNotification, selectNotification } from 'features/notification';
-import { Toast } from 'components';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { clearNotification, selectNotification } from '@/features/notification';
+import { Toast } from '@/components';
 import React from 'react';
-import { useRetryAction } from 'hooks';
+import { useRetryAction } from '@/hooks';
 
 type NotificationProps = React.HTMLAttributes<HTMLDivElement> & {
   view: 'default' | 'mobile';

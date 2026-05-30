@@ -1,8 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { auth } from 'api/firebase.ts';
-import { useAppDispatch } from 'store';
-import { clearUser, setUser } from './userSlice';
-import { setError, setSuccess } from '../notification';
+import { auth } from '@/api';
+import { useAppDispatch } from '@/store';
+import { clearUser, setError, setSuccess, setUser } from '@/features';
 
 export function useLogin() {
   const dispatch = useAppDispatch();

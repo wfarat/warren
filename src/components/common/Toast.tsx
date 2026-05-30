@@ -1,5 +1,5 @@
-import Close from 'assets/icons/Close.svg?react';
-import Success from 'assets/icons/Success.svg?react';
+import Close from '@/assets/icons/Close.svg?react';
+import Success from '@/assets/icons/Success.svg?react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 import React from 'react';

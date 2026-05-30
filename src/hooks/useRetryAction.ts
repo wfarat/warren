@@ -1,5 +1,5 @@
 import { useLocation } from './useLocation';
-import { useLogin } from '../features';
+import { useLogin } from '@/features';
 
 export function useRetryAction() {
   const { getLocation } = useLocation();
