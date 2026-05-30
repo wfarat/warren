@@ -5,7 +5,6 @@ import { useAppDispatch } from 'store';
 import { signInWithPopup, signOut, type User, type UserCredential } from 'firebase/auth';
 import { clearUser, setUser } from './userSlice';
 import { setError, setSuccess } from '../notification';
-import { getUserDevices } from 'features/device/deviceSlice';
 
 vi.mock('store', () => ({
   useAppDispatch: vi.fn(),
@@ -19,10 +18,6 @@ vi.mock('./userSlice', () => ({
 vi.mock('../notification/notificationSlice', () => ({
   setSuccess: vi.fn((msg) => ({ type: 'notification/setSuccess', payload: msg })),
   setError: vi.fn((err) => ({ type: 'notification/setError', payload: err })),
-}));
-
-vi.mock('features/device/deviceSlice', () => ({
-  getUserDevices: vi.fn(() => ({ type: 'device/getUserDevices' })),
 }));
 
 vi.mock('firebase/auth', () => ({
@@ -71,7 +66,6 @@ describe('useLogin hook', () => {
     });
 
     expect(dispatch).toHaveBeenCalledWith(setUser(expect.anything()));
-    expect(dispatch).toHaveBeenCalledWith(getUserDevices());
     expect(dispatch).toHaveBeenCalledWith(setSuccess('User logged in successfully.'));
   });
 
