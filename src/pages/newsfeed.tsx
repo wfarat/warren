@@ -1,3 +1,9 @@
+import { NewPost } from '@/features/post/NewPost.tsx';
+
 export default function Newsfeed() {
-  return <div>Newsfeed</div>;
+  return (
+    <div>
+      <NewPost />
+    </div>
+  );
 }
