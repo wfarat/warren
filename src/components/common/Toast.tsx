@@ -75,7 +75,7 @@ export function Toast({
       {showRetry && (
         <Button
           onClick={handleRetry}
-          theme="dark"
+          intent="primary"
           className="mt-6 sm:mt-0"
           size={view === 'mobile' ? 'xxl' : 'md'}
         >

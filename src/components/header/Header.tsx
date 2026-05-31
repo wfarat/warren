@@ -9,7 +9,7 @@ import { useState } from 'react';
 export function Header() {
   const [showSearch, setShowSearch] = useState(false);
   return (
-    <header className=" bg-bg-1 flex-between p-3 fixed top-0 left-0 right-0 z-10">
+    <header className=" bg-bg-1 flex-between p-3 fixed top-0 left-0 right-0 z-10 border-b border-grey-2">
       {showSearch ? (
         <div className="flex-center gap-3 w-full">
           <Search className="w-full" />

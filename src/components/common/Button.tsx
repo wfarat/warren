@@ -2,13 +2,14 @@ import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { twMerge } from 'tailwind-merge';
 
-const buttonVariants = cva('rounded-xs cursor-pointer transition-colors flex-center', {
+const buttonVariants = cva('rounded-lg cursor-pointer transition-colors flex-center', {
   variants: {
-    theme: {
-      blue: 'bg-primary hover:bg-primary-light active:bg-primary-dark',
-      dark: 'bg-bg-3 hover:text-grey-4',
-      grey: 'bg-grey-2 hover:bg-grey-3 text-white/60 hover:text-grey-4',
-      'dark-border': 'border border-white/60 hover:bg-grey-2',
+    intent: {
+      primary: 'bg-primary hover:bg-primary-light text-on-primary active:bg-primary-dark',
+      'primary-dark': 'bg-primary-container text-on-primary-container hover:bg-inverse-primary',
+      secondary: 'bg-secondary-container/20 hover:bg-secondary-container/40 text-secondary-light',
+      grey: 'bg-bg-3 border border-grey-2 hover:bg-grey-2',
+      outlined: 'border border-primary text-primary',
       disabled: 'bg-grey-3 cursor-not-allowed text-white/40',
     },
     size: {
@@ -21,20 +22,19 @@ const buttonVariants = cva('rounded-xs cursor-pointer transition-colors flex-cen
     },
   },
   defaultVariants: {
-    theme: 'blue',
+    intent: 'primary',
     size: 'default',
   },
 });
 
 interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
 
-export function Button({ theme, size, children, className, ...props }: ButtonProps) {
+export function Button({ intent, size, children, className, ...props }: ButtonProps) {
   return (
     <button
       // twMerge is needed to merge CVA classes with the className prop
-      className={twMerge(buttonVariants({ theme, size, className }))}
+      className={twMerge(buttonVariants({ intent, size, className }))}
       {...props}
     >
       {children}

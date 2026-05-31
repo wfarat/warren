@@ -1,0 +1,21 @@
+a {
+    color: var(--color-on-surface-variant);
+
+    &.active {
+        color: var(--color-primary);
+        background-color: color-mix(in srgb, var(--color-primary-container) 10%, transparent);
+        border-left: 4px solid var(--color-primary);
+    }
+
+    svg {
+        fill: currentColor;
+    }
+
+    &.pending {
+
+    }
+
+    &.transitioning {
+
+    }
+}

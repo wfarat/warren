@@ -22,7 +22,7 @@ export function Search({ className }: SearchProps) {
   const isDropdownVisible = searchTerm.length > 0 && filteredData.length > 0;
 
   const inputContainerClasses = [
-    'flex items-center p-1 w-full bg-transparent border border-white/25',
+    'flex items-center p-1 w-full bg-bg-3 border border-grey-2',
     'z-10',
     isDropdownVisible ? 'rounded-t-2xl border-b-0' : 'rounded-2xl',
   ].join(' ');
@@ -41,7 +41,7 @@ export function Search({ className }: SearchProps) {
         <SearchIcon className="mr-1" />
       </div>
       {isDropdownVisible && (
-        <div className="absolute left-0 w-full bg-bg-2 border border-t-0 rounded-b-2xl top-full border-white/25 shadow-lg overflow-hidden z-20">
+        <div className="absolute left-0 w-full bg-bg-3 border border-t-0 rounded-b-2xl top-full border-grey-2 shadow-lg overflow-hidden z-20">
           <div className="border-t-0 rounded-b-lg">
             {filteredData.map((person) => (
               <div

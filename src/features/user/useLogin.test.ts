@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/store';
 import { signInWithPopup, signOut, type User, type UserCredential } from 'firebase/auth';
 import { clearUser, setError, setSuccess, setUser } from '@/features';
 
-vi.mock('store', () => ({
+vi.mock('@/store', () => ({
   useAppDispatch: vi.fn(),
 }));
 
@@ -29,7 +29,7 @@ vi.mock('firebase/auth', () => ({
   signOut: vi.fn(),
 }));
 
-vi.mock('api/firebase', () => ({
+vi.mock('@/api/firebase', () => ({
   auth: {},
 }));
 
