@@ -10,7 +10,8 @@ type UserMenuProps = {
 };
 
 export function UserMenu({ handleClick }: UserMenuProps) {
-  const { isAuthenticated, given_name, photoUrl } = useAppSelector(selectUser);
+  const { isAuthenticated, currentUser } = useAppSelector(selectUser);
+  const { photoUrl, given_name } = currentUser || {};
   const { login, logout } = useLogin();
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);

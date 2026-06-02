@@ -1,20 +1,23 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 type UserData = {
+  id: string;
   given_name?: string;
   name?: string;
   photoUrl?: string;
   email?: string;
 };
 
-interface UserState extends UserData {
+interface UserState {
+  currentUser: UserData | null;
   isAuthenticated: boolean;
   location: { lat: number; lng: number };
 }
 
 const initialState: UserState = {
+  currentUser: null,
   isAuthenticated: false,
-  location: { lat: 54.352, lng: 18.6466 },
+  location: { lat: 54.352, lng: 18.6466 }, // Defaults to Gdańsk!
 };
 
 const userSlice = createSlice({
@@ -22,14 +25,12 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action: PayloadAction<UserData>) {
-      state.given_name = action.payload.given_name;
-      state.name = action.payload.name;
-      state.photoUrl = action.payload.photoUrl;
-      state.email = action.payload.email;
+      state.currentUser = action.payload;
       state.isAuthenticated = true;
     },
     clearUser(state) {
-      Object.assign(state, initialState);
+      state.currentUser = null;
+      state.isAuthenticated = false;
     },
     setUserLocation(state, action: PayloadAction<{ lat: number; lng: number }>) {
       state.location = action.payload;

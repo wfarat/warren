@@ -3,6 +3,7 @@
  */
 
 export * from "./UserMenu";
+export * from "./useAuthListener";
 export * from "./useLogin";
 export * from "./userSelectors";
 export * from "./userSlice";

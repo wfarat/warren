@@ -8,7 +8,7 @@ import './left_nav.css';
 export function LeftNav() {
   return (
     <nav className="pt-6 flex-col flex gap-2 w-64 border-r border-grey-2">
-      <NavLink to="/newsfeed" className="flex-start px-4 py-3 gap-2">
+      <NavLink to="/" className="flex-start px-4 py-3 gap-2">
         <NewsIcon />
         Newsfeed
       </NavLink>

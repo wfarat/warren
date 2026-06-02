@@ -3,5 +3,5 @@
  */
 
 export * from "./components/NewPost";
-export * from "./components/Post";
+export * from "./components/PostCard";
 export * from "./components/PostList";

@@ -7,7 +7,8 @@
     "src/features",
     "src/features/post",
     "src/features/user",
-    "src/features/notification"
+    "src/features/notification",
+    "src/types"
   ],
   "delete": true,
   "structure": "flat",

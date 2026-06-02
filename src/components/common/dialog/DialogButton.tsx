@@ -7,9 +7,9 @@ type Props = {
 
 export function DialogButton({ icon: Icon, text, onClick }: Props) {
   return (
-    <button type="button" className="p-2" onClick={onClick}>
+    <button type="button" className="p-2 flex-center gap-2" onClick={onClick}>
       <Icon />
-      {text}
+      <span className="text-grey-5">{text}</span>
     </button>
   );
 }
