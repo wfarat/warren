@@ -5,10 +5,12 @@
     "src/hooks",
     "src/components",
     "src/features",
+    "src/features/post",
     "src/features/user",
     "src/features/notification"
   ],
   "delete": true,
   "structure": "flat",
-  "barrelName": "index"
+  "barrelName": "index",
+  "exclude": [".*\\.test\\.ts$", ".*\\.test\\.tsx$", ".*\\.spec\\.ts$", "__tests__"]
 }

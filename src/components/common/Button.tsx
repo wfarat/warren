@@ -6,8 +6,8 @@ const buttonVariants = cva('rounded-lg cursor-pointer transition-colors flex-cen
   variants: {
     intent: {
       primary: 'bg-primary hover:bg-primary-light text-on-primary active:bg-primary-dark',
-      'primary-dark': 'bg-primary-container text-on-primary-container hover:bg-inverse-primary',
-      secondary: 'bg-secondary-container/20 hover:bg-secondary-container/40 text-secondary-light',
+      'primary-dark': 'bg-primary-components text-on-primary-components hover:bg-inverse-primary',
+      secondary: 'bg-secondary-components/20 hover:bg-secondary-components/40 text-secondary-light',
       grey: 'bg-bg-3 border border-grey-2 hover:bg-grey-2',
       outlined: 'border border-primary text-primary',
       disabled: 'bg-grey-3 cursor-not-allowed text-white/40',

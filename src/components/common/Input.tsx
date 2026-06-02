@@ -1,4 +1,4 @@
-import Close from 'assets/icons/Close.svg?react';
+import Close from '@/assets/icons/Close.svg?react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import React, { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

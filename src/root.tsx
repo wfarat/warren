@@ -1,8 +1,8 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
-import { Header } from '@/components/header';
-import { Notification } from '@/features';
+import { Header } from '@/components';
+import { Notification } from '@/features/notification';
 import { LeftNav } from '@/components/left-nav/LeftNav.tsx';
 
 export function Layout({ children }: { children: React.ReactNode }) {
