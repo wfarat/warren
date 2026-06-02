@@ -1,5 +1,6 @@
 import { useLocation } from './useLocation';
 import { useLogin } from '@/features';
+import { fetchTimelinePage } from '@/features/post/postActions.ts';
 
 export function useRetryAction() {
   const { getLocation } = useLocation();
@@ -8,6 +9,7 @@ export function useRetryAction() {
     LOGIN: () => login(),
     LOGOUT: () => logout(),
     LOCATION: () => getLocation(),
+    TIMELINE: () => fetchTimelinePage(true),
   };
 
   return (action?: string) => {

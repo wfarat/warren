@@ -6,7 +6,6 @@ export type Author = {
 
 export type PostInput = {
   content: string;
-  author: Author;
   media?: Media;
 };
 
@@ -26,6 +25,7 @@ export type MediaType = 'image' | 'video' | 'poll';
 
 export type Post = PostInput & {
   id: string;
+  author: Author;
   likesCount: number;
   commentsCount: number;
   sharesCount: number;

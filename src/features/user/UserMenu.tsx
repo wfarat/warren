@@ -5,14 +5,11 @@ import Bell from '@/assets/icons/Bell.svg?react';
 import Arrow from '@/assets/icons/Arrow.svg?react';
 import { Button } from '@/components';
 
-type UserMenuProps = {
-  handleClick?: () => void;
-};
-
-export function UserMenu({ handleClick }: UserMenuProps) {
+export function UserMenu() {
   const { isAuthenticated, currentUser } = useAppSelector(selectUser);
   const { photoUrl, given_name } = currentUser || {};
   const { login, logout } = useLogin();
+  console.log(currentUser);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -49,10 +46,7 @@ export function UserMenu({ handleClick }: UserMenuProps) {
     <div ref={menuRef} className="relative">
       <div
         className="flex items-center gap-2 cursor-pointer"
-        onClick={() => {
-          handleClick?.();
-          setIsOpen((prev) => !prev);
-        }}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
         <div className="relative mr-2">
           <div className="w-2 h-2 absolute right-0 bg-danger-light rounded-full" />

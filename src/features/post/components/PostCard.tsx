@@ -24,7 +24,6 @@ export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
         setLiveLikesCount(data.likesCount || 0);
         setLiveCommentsCount(data.commentsCount || 0);
 
-        // Check if current user is in the master likes array
         const likesArray: string[] = data.likes || [];
         setIsLiked(likesArray.includes(currentUserId));
       }

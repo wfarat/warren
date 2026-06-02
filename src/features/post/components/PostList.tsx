@@ -1,17 +1,16 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { fetchTimelinePage } from '../post.actions';
+import { fetchTimelinePage } from '../postActions.ts';
 import { PostCard } from './PostCard';
+import { Button } from '@/components';
 
 export function PostList() {
   const dispatch = useAppDispatch();
   const currentUserId = useAppSelector((state) => state.user.currentUser?.id);
 
-  // Connect straight to Redux for global layouts
   const { timeline, isLoading, hasMore } = useAppSelector((state) => state.post);
 
   useEffect(() => {
-    // Only trigger initial load if the feed array is totally empty
     if (timeline.length === 0 && currentUserId) {
       dispatch(fetchTimelinePage(true));
     }
@@ -26,12 +25,9 @@ export function PostList() {
       {isLoading && <p className="text-center text-gray-500">Loading feed items...</p>}
 
       {hasMore && !isLoading && (
-        <button
-          onClick={() => dispatch(fetchTimelinePage(false))}
-          className="mt-4 p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
+        <Button onClick={() => dispatch(fetchTimelinePage(false))} intent="primary-dark" size="lg">
           Load More Posts
-        </button>
+        </Button>
       )}
     </div>
   );

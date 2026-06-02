@@ -27,7 +27,7 @@ export function Header() {
               className="sm:hidden block w-6 h-6"
               onClick={() => setShowSearch((prev) => !prev)}
             />
-            <UserMenu handleClick={() => console.log('clicked')} />
+            <UserMenu />
           </div>
         </>
       )}

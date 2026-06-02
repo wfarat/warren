@@ -9,6 +9,13 @@ export const store = configureStore({
     user: userReducer,
     post: postReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['post/appendFeedPage', 'post/insertNewPost'],
+        ignoredPaths: ['post.lastVisibleDoc', 'post.timeline'],
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

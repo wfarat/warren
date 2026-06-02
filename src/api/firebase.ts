@@ -1,5 +1,6 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
+  Firestore,
   getFirestore,
   initializeFirestore,
   persistentLocalCache,
@@ -12,7 +13,7 @@ const firebaseConfig = JSON.parse(FIREBASE_CONFIG);
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-let db;
+let db: Firestore;
 try {
   db = initializeFirestore(app, {
     localCache: persistentLocalCache({

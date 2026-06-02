@@ -17,7 +17,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/api/firebase';
-import type { Author, Post, PostInput } from '@/types';
+import type { Author, Post } from '@/types';
 
 /**
  * Fetches the user IDs of everyone following the current user.
@@ -31,13 +31,13 @@ export const postRepo = {
   /**
    * Creates a post globally AND fans it out to all followers' timelines simultaneously.
    */
-  async createPost(input: PostInput): Promise<void> {
+  async createPost(input: Post): Promise<void> {
     const batch = writeBatch(db);
 
     const globalPostRef = doc(collection(db, 'posts'));
     const postData = {
       ...input,
-      createdAt: serverTimestamp(), // Use server time to prevent local clock tampering
+      createdAt: serverTimestamp(),
     };
 
     batch.set(globalPostRef, postData);

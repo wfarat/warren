@@ -1,12 +1,13 @@
 // src/features/post/postSlice.ts
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Post } from '@/types';
+import type { Post, PostInput } from '@/types';
 
 interface PostState {
   timeline: Post[];
   lastVisibleDoc: any | null;
   isLoading: boolean;
   hasMore: boolean;
+  postInput: PostInput;
 }
 
 const initialState: PostState = {
@@ -14,6 +15,9 @@ const initialState: PostState = {
   lastVisibleDoc: null,
   isLoading: false,
   hasMore: true,
+  postInput: {
+    content: '',
+  },
 };
 
 export const postSlice = createSlice({
@@ -30,13 +34,20 @@ export const postSlice = createSlice({
         state.hasMore = false;
       }
     },
+    insertNewPost: (state, action: PayloadAction<Post>) => {
+      state.timeline = [action.payload, ...state.timeline];
+    },
     resetFeed: (state) => {
       state.timeline = [];
       state.lastVisibleDoc = null;
       state.hasMore = true;
     },
+    setPostInput: (state, action: PayloadAction<PostInput>) => {
+      state.postInput = action.payload;
+    },
   },
 });
 
-export const { setFeedLoading, appendFeedPage, resetFeed } = postSlice.actions;
+export const { setFeedLoading, appendFeedPage, resetFeed, insertNewPost, setPostInput } =
+  postSlice.actions;
 export const postReducer = postSlice.reducer;

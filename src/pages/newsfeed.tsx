@@ -1,4 +1,4 @@
-import { NewPost } from '@/features/post';
+import { NewPost, PostList } from '@/features/post';
 import { RightBar } from '@/components';
 
 export default function Newsfeed() {
@@ -6,6 +6,7 @@ export default function Newsfeed() {
     <main className="flex gap-8 p-8 w-full">
       <div className="flex flex-1 flex-col gap-6">
         <NewPost />
+        <PostList />
       </div>
       <RightBar>
         <>s</>
