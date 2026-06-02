@@ -1,11 +1,9 @@
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectUserPhoto } from '@/features';
-import { DialogButton } from '@/components/common/dialog/DialogButton.tsx';
-import { createPostAction } from '../postActions.ts';
+import { createPostAction, selectUserPhoto } from '@/features';
+import { Button, IconButton } from '@/components';
 import Picture from '@/assets/icons/Picture.svg?react';
 import Video from '@/assets/icons/Video.svg?react';
 import Poll from '@/assets/icons/Poll.svg?react';
-import { Button } from '@/components';
 import { selectPostInput, selectPostLoading } from '@/features/post/postSelectors.ts';
 import { setPostInput } from '@/features/post/postSlice.ts';
 
@@ -45,9 +43,9 @@ export function NewPost() {
       </div>
       <div className="flex-between border-t border-grey-2 pt-4">
         <div className="flex-center gap-2">
-          <DialogButton icon={Picture} text="Media" />
-          <DialogButton icon={Video} text="Video" />
-          <DialogButton icon={Poll} text="Poll" />
+          <IconButton icon={Picture} text="Media" />
+          <IconButton icon={Video} text="Video" />
+          <IconButton icon={Poll} text="Poll" />
         </div>
         <Button intent={getButtonIntent()} onClick={handlePostSubmit}>
           {isFeedLoading ? 'Posting...' : 'Post'}

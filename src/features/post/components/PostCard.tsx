@@ -4,6 +4,11 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/api/firebase';
 import { postRepo } from '@/api';
 import type { Post } from '@/types';
+import { IconButton } from '@/components';
+import Like from '@/assets/icons/Like.svg?react';
+import Share from '@/assets/icons/Share.svg?react';
+import Comment from '@/assets/icons/Comment.svg?react';
+import More from '@/assets/icons/More.svg?react';
 
 type PostCardProps = {
   timelinePost: Post;
@@ -13,6 +18,7 @@ type PostCardProps = {
 export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
   const [liveLikesCount, setLiveLikesCount] = useState(timelinePost.likesCount);
   const [liveCommentsCount, setLiveCommentsCount] = useState(timelinePost.commentsCount);
+  const [liveSharesCount, setLiveSharesCount] = useState(timelinePost.sharesCount);
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
@@ -23,7 +29,7 @@ export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
         const data = snapshot.data();
         setLiveLikesCount(data.likesCount || 0);
         setLiveCommentsCount(data.commentsCount || 0);
-
+        setLiveSharesCount(data.sharesCount || 0);
         const likesArray: string[] = data.likes || [];
         setIsLiked(likesArray.includes(currentUserId));
       }
@@ -44,28 +50,54 @@ export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
     }
   };
 
+  const getTimeText = (date: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    if (days > 0) {
+      return `${days}d`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    } else {
+      return `${seconds}s`;
+    }
+  };
   return (
-    <div className="p-4 border rounded-lg bg-white dark:bg-zinc-900 shadow-sm">
-      {/* Author Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <img src={timelinePost.author.photoUrl} className="w-9 h-9 rounded-full" alt="" />
-        <span className="font-semibold text-gray-800 dark:text-zinc-200">
-          {timelinePost.author.displayName}
-        </span>
+    <div className="border border-grey-2 bg-bg-3 p-6 relative flex flex-col gap-4 rounded-xl drop-shadow-bg-3">
+      <button
+        type="button"
+        className="flex-center border-none absolute top-2 right-2 w-10 h-10 cursor-pointer rounded-full hover:bg-grey-2"
+      >
+        <More />
+      </button>
+      <div className="flex items-center gap-3 mb-3">
+        <img src={timelinePost.author.photoUrl} className="w-10 h-10 rounded-full" alt="" />
+        <div className="flex flex-col gap-1">
+          <span className="font-semibold text-shadow-on-surface">
+            {timelinePost.author.displayName}
+          </span>
+          <span className="text-xs text-grey-1">
+            {getTimeText(timelinePost.createdAt.toDate())} ago
+          </span>
+        </div>
       </div>
 
-      {/* Content */}
-      <p className="text-gray-700 dark:text-zinc-300 mb-4">{timelinePost.content}</p>
+      <p className="text-on-surface-variant mb-4">{timelinePost.content}</p>
 
-      {/* Interaction Bar */}
-      <div className="flex gap-6 text-sm text-gray-500 border-t pt-3 dark:border-zinc-800">
-        <button
+      <div className="flex gap-6 text-sm pt-4 text-grey-1 border-t border-grey-2">
+        <IconButton
           onClick={handleLikeToggle}
-          className={`flex items-center gap-1 font-medium ${isLiked ? 'text-blue-600' : 'hover:text-blue-500'}`}
-        >
-          👍 {liveLikesCount} Likes
-        </button>
-        <span className="cursor-pointer hover:text-gray-700">💬 {liveCommentsCount} Comments</span>
+          icon={Like}
+          text={String(liveLikesCount)}
+          textClass="text-grey-1"
+        />
+        <IconButton icon={Comment} text={String(liveCommentsCount)} textClass="text-grey-1" />
+        <IconButton icon={Share} text={String(liveSharesCount)} textClass="text-grey-1" />
       </div>
     </div>
   );

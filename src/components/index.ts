@@ -3,10 +3,10 @@
  */
 
 export * from "./common/Button";
+export * from "./common/IconButton";
 export * from "./common/Input";
 export * from "./common/Toast";
 export * from "./common/dialog/Dialog";
-export * from "./common/dialog/DialogButton";
 export * from "./common/right-bar/RightBar";
 export * from "./header/Header";
 export * from "./header/Search";

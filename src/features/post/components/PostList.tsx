@@ -17,7 +17,7 @@ export function PostList() {
   }, [dispatch, currentUserId, timeline.length]);
 
   return (
-    <div className="flex flex-col gap-4 max-w-xl mx-auto w-full">
+    <div className="flex flex-col gap-4 mx-auto w-full">
       {timeline.map((post) => (
         <PostCard key={post.id} timelinePost={post} currentUserId={currentUserId || ''} />
       ))}

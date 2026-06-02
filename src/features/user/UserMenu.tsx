@@ -9,7 +9,6 @@ export function UserMenu() {
   const { isAuthenticated, currentUser } = useAppSelector(selectUser);
   const { photoUrl, given_name } = currentUser || {};
   const { login, logout } = useLogin();
-  console.log(currentUser);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
