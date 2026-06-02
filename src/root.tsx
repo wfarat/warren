@@ -33,7 +33,7 @@ export default function Root() {
   return (
     <Provider store={store}>
       <Header />
-      <div className="flex gap-2 pt-20 bg-bg-2">
+      <div className="flex gap-2 pt-20 bg-bg-2 min-h-screen">
         <LeftNav />
         <AppContent />
       </div>

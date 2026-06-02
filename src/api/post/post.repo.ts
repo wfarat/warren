@@ -29,12 +29,18 @@ async function getFollowerIds(userId: string): Promise<string[]> {
 
 export const postRepo = {
   /**
+   * 🌟 Generates an offline ID string matching Firestore's native format
+   */
+  generateNewPostId(): string {
+    return doc(collection(db, 'posts')).id;
+  },
+  /**
    * Creates a post globally AND fans it out to all followers' timelines simultaneously.
    */
-  async createPost(input: Post): Promise<void> {
+  async createPost(postId: string, input: Post): Promise<void> {
     const batch = writeBatch(db);
 
-    const globalPostRef = doc(collection(db, 'posts'));
+    const globalPostRef = doc(db, 'posts', postId);
     const postData = {
       ...input,
       createdAt: serverTimestamp(),
@@ -42,12 +48,12 @@ export const postRepo = {
 
     batch.set(globalPostRef, postData);
 
-    const ownTimelineRef = doc(db, 'users', input.author.userId, 'timeline', globalPostRef.id);
+    const ownTimelineRef = doc(db, 'users', input.author.userId, 'timeline', postId);
     batch.set(ownTimelineRef, postData);
 
     const followerIds = await getFollowerIds(input.author.userId);
     followerIds.forEach((followerId) => {
-      const followerTimelineRef = doc(db, 'users', followerId, 'timeline', globalPostRef.id);
+      const followerTimelineRef = doc(db, 'users', followerId, 'timeline', postId);
       batch.set(followerTimelineRef, postData);
     });
 

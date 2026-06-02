@@ -3,6 +3,7 @@ import { postRepo } from '@/api';
 import { appendFeedPage, insertNewPost, setFeedLoading } from './postSlice';
 import { setError, setSuccess } from '@/features';
 import type { Post, PostInput } from '@/types';
+import { Timestamp } from 'firebase/firestore';
 
 /**
  * Thunk action to pull the next chunk of posts from the repository layer
@@ -44,9 +45,9 @@ export const createPostAction =
     const currentUser = user.currentUser;
 
     if (!currentUser || !input.content.trim()) return;
-
+    const finalPostId = postRepo.generateNewPostId();
     const newPost: Post = {
-      id: crypto.randomUUID(),
+      id: finalPostId,
       content: input.content,
       author: {
         userId: currentUser.id,
@@ -56,7 +57,7 @@ export const createPostAction =
       likesCount: 0,
       commentsCount: 0,
       sharesCount: 0,
-      createdAt: new Date().toISOString(), // Fallback timestamp string
+      createdAt: Timestamp.fromDate(new Date()),
     };
 
     if (input.media) {
@@ -66,7 +67,7 @@ export const createPostAction =
       dispatch(insertNewPost(newPost));
       if (onSuccess) onSuccess();
 
-      await postRepo.createPost(newPost);
+      await postRepo.createPost(finalPostId, newPost);
       dispatch(setSuccess('Post created successfully!'));
     } catch (error) {
       dispatch(setError({ message: 'Failed to create post' }));
