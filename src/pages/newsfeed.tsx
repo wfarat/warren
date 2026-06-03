@@ -1,16 +1,18 @@
-import { NewPost, PostList } from '@/features/post';
+import { Comments, NewPost, PostList, selectCurrentPostId } from '@/features/post';
 import { RightBar } from '@/components';
+import { useAppSelector } from '@/store';
 
 export default function Newsfeed() {
+  const currentPostId = useAppSelector(selectCurrentPostId);
   return (
-    <main className="flex gap-8 p-8 w-full">
-      <div className="flex flex-1 flex-col gap-6">
-        <NewPost />
-        <PostList />
-      </div>
-      <RightBar>
-        <>s</>
-      </RightBar>
-    </main>
+    <div className="flex gap-8 w-full">
+      <main className="p-8 w-full">
+        <div className="flex flex-1 flex-col gap-6">
+          <NewPost />
+          <PostList />
+        </div>
+      </main>
+      <RightBar>{currentPostId && <Comments />}</RightBar>
+    </div>
   );
 }

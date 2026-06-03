@@ -4,3 +4,4 @@
 
 export * from "./post";
 export * from "./svg";
+export * from "./util";

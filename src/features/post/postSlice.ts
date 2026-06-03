@@ -1,6 +1,5 @@
-// src/features/post/postSlice.ts
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Post, PostInput } from '@/types';
+import type { Comment, Post, PostInput } from '@/types';
 
 interface PostState {
   timeline: Post[];
@@ -8,6 +7,8 @@ interface PostState {
   isLoading: boolean;
   hasMore: boolean;
   postInput: PostInput;
+  currentPostId?: string;
+  comments: Comment[];
 }
 
 const initialState: PostState = {
@@ -18,6 +19,7 @@ const initialState: PostState = {
   postInput: {
     content: '',
   },
+  comments: [],
 };
 
 export const postSlice = createSlice({
@@ -35,7 +37,7 @@ export const postSlice = createSlice({
       }
     },
     insertNewPost: (state, action: PayloadAction<Post>) => {
-      state.timeline = [action.payload, ...state.timeline];
+      state.timeline.push(action.payload);
     },
     resetFeed: (state) => {
       state.timeline = [];
@@ -45,9 +47,26 @@ export const postSlice = createSlice({
     setPostInput: (state, action: PayloadAction<PostInput>) => {
       state.postInput = action.payload;
     },
+    setCurrentPostId: (state, action: PayloadAction<string>) => {
+      state.currentPostId = action.payload;
+    },
+    setComments: (state, action: PayloadAction<Comment[]>) => {
+      state.comments = action.payload;
+    },
+    addComment: (state, action: PayloadAction<Comment>) => {
+      state.comments.push(action.payload);
+    },
   },
 });
 
-export const { setFeedLoading, appendFeedPage, resetFeed, insertNewPost, setPostInput } =
-  postSlice.actions;
+export const {
+  setFeedLoading,
+  appendFeedPage,
+  resetFeed,
+  insertNewPost,
+  setPostInput,
+  setCurrentPostId,
+  setComments,
+  addComment,
+} = postSlice.actions;
 export const postReducer = postSlice.reducer;

@@ -12,7 +12,8 @@ export type PostInput = {
 };
 
 export type Media = {
-  url: string;
+  url?: string;
+  publicId?: string;
   type: MediaType;
 };
 
@@ -20,6 +21,8 @@ export type Comment = {
   id: string;
   content: string;
   author: Author;
+  likes: string[];
+  replies: string[];
   createdAt: Timestamp;
 };
 

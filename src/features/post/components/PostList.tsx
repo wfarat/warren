@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { fetchTimelinePage } from '../postActions.ts';
+import { fetchTimelinePage, selectCurrentUserId, selectPost } from '@/features';
 import { PostCard } from './PostCard';
 import { Button } from '@/components';
 
 export function PostList() {
   const dispatch = useAppDispatch();
-  const currentUserId = useAppSelector((state) => state.user.currentUser?.id);
+  const currentUserId = useAppSelector(selectCurrentUserId);
 
-  const { timeline, isLoading, hasMore } = useAppSelector((state) => state.post);
+  const { timeline, isLoading, hasMore } = useAppSelector(selectPost);
 
   useEffect(() => {
     if (timeline.length === 0 && currentUserId) {

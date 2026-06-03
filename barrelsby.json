@@ -8,7 +8,8 @@
     "src/features/post",
     "src/features/user",
     "src/features/notification",
-    "src/types"
+    "src/types",
+    "src/validators"
   ],
   "delete": true,
   "structure": "flat",

@@ -5,10 +5,13 @@ import { Button } from '@/components';
 
 type Props = React.PropsWithChildren<{
   onClose: () => void;
+  onSubmit?: () => void;
+  submitButtonText?: string;
+  disabled?: boolean;
   title?: string;
 }>;
 
-export function Dialog({ onClose, children, title }: Props) {
+export function Dialog({ onClose, onSubmit, submitButtonText, disabled, children, title }: Props) {
   return createPortal(
     <div
       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -35,6 +38,16 @@ export function Dialog({ onClose, children, title }: Props) {
             <Button intent="outlined" size="md" onClick={onClose}>
               Cancel
             </Button>
+            {onSubmit && (
+              <Button
+                intent={disabled ? 'disabled' : 'primary-dark'}
+                disabled={disabled}
+                size="md"
+                onClick={onSubmit}
+              >
+                {submitButtonText || 'Submit'}
+              </Button>
+            )}
           </div>
         </div>
       </div>

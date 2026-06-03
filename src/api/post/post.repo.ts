@@ -1,5 +1,4 @@
 import {
-  addDoc,
   arrayRemove,
   arrayUnion,
   collection,
@@ -12,12 +11,13 @@ import {
   query,
   QueryDocumentSnapshot,
   serverTimestamp,
+  setDoc,
   startAfter,
   updateDoc,
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/api/firebase';
-import type { Author, Post } from '@/types';
+import type { Comment, Post } from '@/types';
 
 /**
  * Fetches the user IDs of everyone following the current user.
@@ -33,6 +33,9 @@ export const postRepo = {
    */
   generateNewPostId(): string {
     return doc(collection(db, 'posts')).id;
+  },
+  generateNewCommentId(postId: string): string {
+    return doc(collection(db, 'posts', postId, 'comments')).id;
   },
   /**
    * Creates a post globally AND fans it out to all followers' timelines simultaneously.
@@ -98,7 +101,7 @@ export const postRepo = {
   },
 
   /**
-   * Triggers a like. Cost: Exactly 1 Write.
+   * Triggers a like.
    */
   async toggleLike(postId: string, currentUserId: string, isLiked: boolean): Promise<void> {
     const masterPostRef = doc(db, 'posts', postId);
@@ -111,22 +114,59 @@ export const postRepo = {
   },
 
   /**
-   * Adds a comment to the subcollection and increments the master counter. Cost: 2 Writes.
+   * Adds a comment to the subcollection and increments the master counter.
    */
-  async addComment(postId: string, author: Author, content: string): Promise<void> {
+  async addComment(postId: string, comment: Comment, commentId?: string): Promise<void> {
     const masterPostRef = doc(db, 'posts', postId);
-    const commentsCollectionRef = collection(db, 'posts', postId, 'comments');
+    const commentDocRef = doc(db, 'posts', postId, 'comments', comment.id);
 
-    // 1. Add comment doc to subcollection
-    await addDoc(commentsCollectionRef, {
-      content,
-      author,
-      createdAt: serverTimestamp(),
-    });
+    await setDoc(commentDocRef, comment);
 
-    // 2. Increment the comment counter on the master post
     await updateDoc(masterPostRef, {
       commentsCount: increment(1),
     });
+
+    if (commentId) {
+      const commentRef = doc(db, 'posts', postId, 'comments', commentId);
+      await updateDoc(commentRef, {
+        replies: arrayUnion(comment.id),
+      });
+    }
+  },
+
+  /**
+   * Toggles a like on a comment.
+   * @param postId
+   * @param commentId
+   * @param currentUserId
+   * @param isLiked
+   */
+  async toggleLikeComment(
+    postId: string,
+    commentId: string,
+    currentUserId: string,
+    isLiked: boolean
+  ): Promise<void> {
+    const commentRef = doc(db, 'posts', postId, 'comments', commentId);
+
+    await updateDoc(commentRef, {
+      likes: isLiked ? arrayRemove(currentUserId) : arrayUnion(currentUserId),
+    });
+  },
+
+  /**
+   * Reads all comments for a post.
+   * @param postId
+   */
+  async readComments(postId: string) {
+    const commentsCollectionRef = collection(db, 'posts', postId, 'comments');
+    const commentsSnapshot = await getDocs(commentsCollectionRef);
+    return commentsSnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        }) as Comment
+    );
   },
 };

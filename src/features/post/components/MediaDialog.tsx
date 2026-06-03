@@ -1,20 +1,132 @@
-import { Dialog } from '@/components';
+import { Button, Dialog, Input } from '@/components';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { selectPostInput, setPostInput } from '@/features';
+import { type ChangeEvent, type DragEvent, useRef, useState } from 'react';
+import Upload from '@/assets/icons/Upload.svg?react';
+import { DialogSwitch } from '@/features/post/components/DialogSwitch.tsx';
+import { validUrl } from '@/validators';
+import type { Validity } from '@/types/util.ts';
 
 type Props = {
   type: 'image' | 'video' | null;
   onClose: () => void;
+  setFile: (file: File) => void;
+  file?: File;
 };
 
-export function MediaDialog({ type, onClose }: Props) {
-  if (!type) return null; // Safety guard
+export function MediaDialog({ type, onClose, setFile, file }: Props) {
+  if (!type) return null;
 
+  const [validity, setValidity] = useState<Validity>({ url: false });
+  const [url, setUrl] = useState<string>('');
+  const [tab, setTab] = useState<'upload' | 'link'>('upload');
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const dispatch = useAppDispatch();
+  const postInput = useAppSelector(selectPostInput);
   const title = type === 'image' ? 'Add Image' : 'Add Video';
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleBrowseClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setValidity({ url: true });
+    }
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const droppedFile = e.dataTransfer.files[0];
+
+      if (type === 'image' && !droppedFile.type.startsWith('image/')) return;
+      if (type === 'video' && !droppedFile.type.startsWith('video/')) return;
+
+      setFile(droppedFile);
+      setValidity({ url: true });
+    }
+  };
+
+  const handleSubmit = () => {
+    if (tab === 'upload' && file) {
+      const temporaryLocalUrl = URL.createObjectURL(file);
+      dispatch(setPostInput({ ...postInput, media: { type, url: temporaryLocalUrl } }));
+    } else {
+      dispatch(setPostInput({ ...postInput, media: { type, url } }));
+    }
+    onClose();
+  };
+
+  const isFormInvalid = tab === 'link' ? !validity.url : !file;
+
   return (
-    <Dialog onClose={onClose} title={title}>
-      {/* Inputs for uploading your media files will go here later */}
-      <div className="text-white mt-4 p-4 border border-dashed border-grey-2 rounded-lg text-center">
-        Drag and drop your files here or browse
+    <Dialog onClose={onClose} title={title} onSubmit={handleSubmit} disabled={isFormInvalid}>
+      <div className="px-8 border-b border-grey-2 w-full">
+        <DialogSwitch label="Upload" active={tab === 'upload'} onClick={() => setTab('upload')} />
+        <DialogSwitch label="Link" active={tab === 'link'} onClick={() => setTab('link')} />
+      </div>
+      <div className="p-12 w-full">
+        {tab === 'upload' && (
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`flex-center p-12 flex-col gap-4 border-2 transition-colors rounded-lg cursor-pointer ${
+              isDragging ? 'border-primary border-solid bg-bg-2' : 'border-grey-2 border-dashed'
+            }`}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept={type === 'image' ? 'image/*' : 'video/*'}
+              className="hidden"
+            />
+
+            <div className="flex-center w-16 h-16 bg-bg-3 rounded-full">
+              <Upload />
+            </div>
+
+            <span className="text-on-surface text-center">
+              {file ? `Selected: ${file.name}` : 'Drag and drop media here'}
+            </span>
+
+            <Button intent="primary-dark" size="lg" onClick={handleBrowseClick} type="button">
+              {file ? 'Change File' : 'Browse Files'}
+            </Button>
+          </div>
+        )}
+        {tab === 'link' && (
+          <div className="flex-center flex-col gap-4 p-12">
+            <span className="text-on-surface">Link to media</span>
+            <Input
+              type="text"
+              value={url}
+              name="url"
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="Paste link here"
+              validation={(value) => (validUrl(value) ? '' : 'Invalid URL')}
+              setValid={setValidity}
+            />
+          </div>
+        )}
       </div>
     </Dialog>
   );

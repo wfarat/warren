@@ -1,30 +1,47 @@
 import { useAppDispatch, useAppSelector } from '@/store';
-import { createPostAction, selectUserPhoto } from '@/features';
+import { createPostAction, MediaDialog, selectUserPhoto, useMediaDialog } from '@/features';
 import { Button, IconButton } from '@/components';
-import { MediaDialog } from './MediaDialog'; // 🌟 Import your dialog component
-import { useMediaDialog } from '../useMediaDialog'; // 🌟 Import your updated hook
 import Picture from '@/assets/icons/Picture.svg?react';
 import Video from '@/assets/icons/Video.svg?react';
 import Poll from '@/assets/icons/Poll.svg?react';
 import { selectPostInput, selectPostLoading } from '@/features/post/postSelectors.ts';
 import { setPostInput } from '@/features/post/postSlice.ts';
+import { useState } from 'react';
+import { uploadImage } from '@/api/cloudinary.ts';
 
 export function NewPost() {
   const dispatch = useAppDispatch();
   const photoUrl = useAppSelector(selectUserPhoto);
   const isFeedLoading = useAppSelector(selectPostLoading);
   const postInput = useAppSelector(selectPostInput);
+  const [file, setFile] = useState<File | undefined>();
 
   const mediaDialog = useMediaDialog();
 
-  const handlePostSubmit = () => {
+  const handlePostSubmit = async () => {
     if (!postInput.content.trim()) return;
-
-    dispatch(
-      createPostAction(postInput, () => {
-        dispatch(setPostInput({ content: '' }));
-      })
-    );
+    if (file && postInput.media?.type === 'image') {
+      const publicId = await uploadImage(file);
+      const newPostInput = {
+        ...postInput,
+        media: {
+          type: postInput.media?.type,
+          publicId,
+        },
+      };
+      dispatch(
+        createPostAction(newPostInput, () => {
+          dispatch(setPostInput({ content: '' }));
+        })
+      );
+      setFile(undefined);
+    } else {
+      dispatch(
+        createPostAction(postInput, () => {
+          dispatch(setPostInput({ content: '' }));
+        })
+      );
+    }
   };
 
   const getButtonIntent = () => {
@@ -46,8 +63,25 @@ export function NewPost() {
             className="bg-bg-2 p-3 rounded-lg h-25 w-full border border-grey-2 focus:outline-none focus:border-primary-light text-white resize-none"
             placeholder="What's on your mind?"
             disabled={isFeedLoading}
-          ></textarea>
+          />
         </div>
+        {postInput.media && postInput.media.type === 'image' && (
+          <div className="relative w-full max-h-100 aspect-video rounded-lg border border-grey-2 overflow-hidden bg-bg-2">
+            <img
+              src={postInput.media.url}
+              alt="Post media preview"
+              className="w-full h-full object-cover"
+            />
+
+            <Button
+              intent="outlined"
+              className="absolute top-3 right-3"
+              onClick={() => dispatch(setPostInput({ ...postInput, media: undefined }))}
+            >
+              Remove
+            </Button>
+          </div>
+        )}
         <div className="flex-between border-t border-grey-2 pt-4">
           <div className="flex-center gap-2">
             <IconButton icon={Picture} text="Media" onClick={() => mediaDialog.open('image')} />
@@ -61,7 +95,12 @@ export function NewPost() {
       </div>
 
       {mediaDialog.isOpen && (
-        <MediaDialog type={mediaDialog.mediaType} onClose={mediaDialog.close} />
+        <MediaDialog
+          type={mediaDialog.mediaType}
+          onClose={mediaDialog.close}
+          setFile={setFile}
+          file={file}
+        />
       )}
     </>
   );

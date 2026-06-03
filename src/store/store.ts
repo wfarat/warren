@@ -12,8 +12,13 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['post/appendFeedPage', 'post/insertNewPost'],
-        ignoredPaths: ['post.lastVisibleDoc', 'post.timeline'],
+        ignoredActions: [
+          'post/appendFeedPage',
+          'post/insertNewPost',
+          'post/addComment',
+          'post/setComments',
+        ],
+        ignoredPaths: ['post.lastVisibleDoc', 'post.timeline', 'post.comments'],
       },
     }),
 });

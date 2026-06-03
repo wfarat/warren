@@ -1,8 +1,7 @@
 import { type AppDispatch, type RootState } from '@/store';
 import { postRepo } from '@/api';
-import { appendFeedPage, insertNewPost, setFeedLoading } from './postSlice';
-import { setError, setSuccess } from '@/features';
-import type { Post, PostInput } from '@/types';
+import { addComment, appendFeedPage, insertNewPost, setError, setFeedLoading, setSuccess, } from '@/features';
+import type { Comment, Post, PostInput } from '@/types';
 import { Timestamp } from 'firebase/firestore';
 
 /**
@@ -71,6 +70,36 @@ export const createPostAction =
       dispatch(setSuccess('Post created successfully!'));
     } catch (error) {
       dispatch(setError({ message: 'Failed to create post' }));
-      console.log('Failed to create post:', error);
+      console.error('Failed to create post:', error);
+    }
+  };
+
+export const addCommentAction =
+  (postId: string, content: string, onSuccess: () => void, commentId?: string) =>
+  async (dispatch: AppDispatch, getState: () => RootState) => {
+    const { user } = getState();
+    const currentUser = user.currentUser;
+    if (!currentUser || !content.trim()) return;
+    const finalCommentId = postRepo.generateNewCommentId(postId);
+    const newComment: Comment = {
+      author: {
+        userId: currentUser.id,
+        displayName: currentUser.name || 'Anonymous',
+        photoUrl: currentUser.photoUrl || '',
+      },
+      content,
+      createdAt: Timestamp.fromDate(new Date()),
+      id: finalCommentId,
+      likes: [],
+      replies: [],
+    };
+    try {
+      dispatch(addComment(newComment));
+      if (onSuccess) onSuccess();
+      await postRepo.addComment(postId, newComment, commentId);
+      dispatch(setSuccess('Comment added successfully!'));
+    } catch (error) {
+      dispatch(setError({ message: 'Failed to add comment' }));
+      console.error('Failed to add comment:', error);
     }
   };

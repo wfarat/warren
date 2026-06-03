@@ -2,36 +2,26 @@ import Close from '@/assets/icons/Close.svg?react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import React, { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import type { Validity } from '@/types/util.ts';
 
-const inputVariants = cva('rounded-xs bg-grey-2 py-1.5 px-3 border-2 focus:outline-none', {
-  variants: {
-    hasIcon: {
-      false: 'w-82 sm:w-106',
-      true: 'w-70 sm:w-94',
+const inputVariants = cva(
+  'w-full bg-bg-3 border border-grey-2 py-2 px-4 focus:outline-none rounded-xl',
+  {
+    variants: {
+      hasError: {
+        true: 'border-danger-dark',
+        false: 'border-grey-2 hover:border-primary-light focus:border-primary-light',
+      },
     },
-    hasError: {
-      true: 'border-danger-dark',
-      false: 'border-grey-2 hover:border-primary-light focus:border-primary-light',
-    },
-  },
-  defaultVariants: {
-    hasIcon: false,
-  },
-});
+  }
+);
 interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>, VariantProps<typeof inputVariants> {
   validation?: (value: string) => string | null;
-  setValid: Dispatch<SetStateAction<ValidityState>>;
+  setValid: Dispatch<SetStateAction<Validity>>;
 }
 
-export function Input({
-  hasIcon,
-  onChange,
-  className,
-  validation,
-  setValid,
-  ...props
-}: InputProps) {
+export function Input({ onChange, className, validation, setValid, ...props }: InputProps) {
   const [error, setError] = React.useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
   useEffect(() => {
@@ -57,11 +47,11 @@ export function Input({
   };
 
   return (
-    <div className={hasIcon ? 'w-80 sm:w-94' : 'w-full'}>
-      <div className="relative">
+    <div className="w-full">
+      <div className="relative w-full">
         <input
           {...props}
-          className={twMerge(inputVariants({ hasIcon, className, hasError: !!error }))}
+          className={twMerge(inputVariants({ className, hasError: !!error }))}
           onChange={handleChange}
         />
         {error && (
