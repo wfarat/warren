@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/store';
-import { createPostAction, selectUserPhoto, useMediaDialog } from '@/features';
+import { createPostAction, selectUserPhoto } from '@/features';
 import { Button, IconButton, MediaDialog } from '@/components';
 import Picture from '@/assets/icons/Picture.svg?react';
 import Video from '@/assets/icons/Video.svg?react';
@@ -9,6 +9,7 @@ import { setPostInput } from '@/features/post/postSlice.ts';
 import { useState } from 'react';
 import { uploadImage } from '@/api/cloudinary.ts';
 import type { Media } from '@/types';
+import { useMediaDialog } from '@/hooks';
 
 export function NewPost() {
   const dispatch = useAppDispatch();

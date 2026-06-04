@@ -57,7 +57,7 @@ export const fetchProfilePosts = () => async (dispatch: AppDispatch, getState: (
       dispatch(setProfilePosts(posts));
     }
   } catch (error) {
-    dispatch(setError({ message: 'Failed to fetch profile posts', retryAction: 'PROFILE' }));
+    dispatch(setError({ message: 'Failed to fetch profile posts', retryAction: 'PROFILE_POSTS' }));
   } finally {
     dispatch(setFeedLoading(false));
   }

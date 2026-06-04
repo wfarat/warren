@@ -14,6 +14,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
+        // 🌟 Add the profile action type that is triggering the scan
         ignoredActions: [
           'post/appendFeedPage',
           'post/insertNewPost',
@@ -21,8 +22,18 @@ export const store = configureStore({
           'post/setComments',
           'post/setProfilePosts',
           'post/setCurrentPost',
+          'profile/setSelectedUserId', // Added this action block
         ],
-        ignoredPaths: ['post.lastVisibleDoc', 'post.timeline', 'post.comments, post.profilePosts'],
+        // 🌟 Add wildcards (**), telling Redux to skip validations on nested properties
+        ignoredPaths: [
+          'post.lastVisibleDoc',
+          'post.timeline',
+          'post.timeline.**',
+          'post.comments',
+          'post.comments.**',
+          'post.profilePosts',
+          'post.profilePosts.**',
+        ],
       },
     }),
 });

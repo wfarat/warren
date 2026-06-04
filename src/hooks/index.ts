@@ -3,4 +3,5 @@
  */
 
 export * from "./useLocation";
+export * from "./useMediaDialog";
 export * from "./useRetryAction";

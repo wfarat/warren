@@ -1,7 +1,6 @@
-import { Button, Dialog, Input } from '@/components';
+import { Button, Dialog, Input, TabNav, type TabOption } from '@/components';
 import { type ChangeEvent, type DragEvent, useRef, useState } from 'react';
 import Upload from '@/assets/icons/Upload.svg?react';
-import { DialogSwitch } from '@/features/post/components/DialogSwitch.tsx';
 import { validUrl } from '@/validators';
 import type { Validity } from '@/types/util.ts';
 import type { Media } from '@/types';
@@ -14,12 +13,19 @@ type Props = {
   action?: (media: Media) => void;
 };
 
+type MediaTab = 'upload' | 'link';
+
+const TAB_OPTIONS: TabOption<MediaTab>[] = [
+  { id: 'upload', label: 'Upload' },
+  { id: 'link', label: 'Link' },
+];
+
 export function MediaDialog({ type, onClose, setFile, file, action }: Props) {
   if (!type) return null;
 
   const [validity, setValidity] = useState<Validity>({ url: false });
   const [url, setUrl] = useState<string>('');
-  const [tab, setTab] = useState<'upload' | 'link'>('upload');
+  const [tab, setTab] = useState<MediaTab>('upload');
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const title = type === 'image' ? 'Add Image' : 'Add Video';
@@ -77,10 +83,7 @@ export function MediaDialog({ type, onClose, setFile, file, action }: Props) {
 
   return (
     <Dialog onClose={onClose} title={title} onSubmit={handleSubmit} disabled={isFormInvalid}>
-      <div className="px-8 border-b border-grey-2 w-full">
-        <DialogSwitch label="Upload" active={tab === 'upload'} onClick={() => setTab('upload')} />
-        <DialogSwitch label="Link" active={tab === 'link'} onClick={() => setTab('link')} />
-      </div>
+      <TabNav options={TAB_OPTIONS} activeTab={tab} onChange={setTab} />
       <div className="p-12 w-full">
         {tab === 'upload' && (
           <div

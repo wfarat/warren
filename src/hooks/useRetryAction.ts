@@ -14,7 +14,7 @@ export function useRetryAction() {
     TIMELINE: () => fetchTimelinePage(true),
     COMMENTS: () => getComments(),
     REPLIES: () => getReplies(),
-    PROFILE: () => fetchProfilePosts(),
+    PROFILE_POSTS: () => fetchProfilePosts(),
   };
 
   return (action?: string) => {

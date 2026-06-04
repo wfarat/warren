@@ -12,3 +12,5 @@ export * from "./header/Header";
 export * from "./header/Search";
 export * from "./left-nav/LeftNav";
 export * from "./media/MediaDialog";
+export * from "./tab-nav/TabButton";
+export * from "./tab-nav/TabNav";

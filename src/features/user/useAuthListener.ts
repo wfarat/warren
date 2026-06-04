@@ -1,8 +1,7 @@
-// src/hooks/useAuthListener.ts
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore'; // 🌟 Import setDoc
-import { auth, db } from '@/api'; // 🌟 Import your database instance
+import { doc, getDoc, setDoc } from 'firebase/firestore'; // 🌟 Added getDoc
+import { auth, db } from '@/api';
 import { useAppDispatch } from '@/store';
 import { clearUser, setUser } from '@/features';
 
@@ -20,18 +19,19 @@ export function useAuthListener() {
           photoUrl: firebaseUser.photoURL || '',
         };
 
-        // 🌟 Fix: Automatically create/ensure the user document exists in Firestore
-        // 'merge: true' ensures we don't overwrite their data if they already exist
         try {
-          await setDoc(
-            doc(db, 'users', firebaseUser.uid),
-            {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (!userDocSnap.exists()) {
+            await setDoc(userDocRef, {
               name: userData.name,
-              email: userData.email,
+              photo: { url: userData.photoUrl },
               updatedAt: new Date().toISOString(),
-            },
-            { merge: true }
-          );
+              followers: 0,
+              following: 0,
+            });
+          }
         } catch (e) {
           console.error('Could not initialize user document in Firestore:', e);
         }

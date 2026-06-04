@@ -1,33 +1,39 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Photo } from '@/types';
+import type { Photo, Profile } from '@/types';
 
 type ProfileState = {
   selectedUserId?: string;
-  name: string;
-  profession?: string;
-  photo?: Photo;
-  banner?: Photo;
-  bio?: string;
-  location?: string;
-  website?: string;
-  followers: number;
-  following: number;
+  profile: Profile;
+  isLoading: boolean;
 };
 const initialState: ProfileState = {
-  name: '',
-  followers: 0,
-  following: 0,
+  profile: {
+    name: '',
+    followers: 0,
+    following: 0,
+  },
+  isLoading: false,
 };
 
 const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
+    setProfileLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
     setSelectedUserId: (state, action: PayloadAction<string>) => {
       state.selectedUserId = action.payload;
+    },
+    setProfile: (state, action: PayloadAction<Profile>) => {
+      state.profile = action.payload;
+    },
+    setProfilePhoto: (state, action: PayloadAction<Photo>) => {
+      state.profile.photo = action.payload;
     },
   },
 });
 
-export const { setSelectedUserId } = profileSlice.actions;
+export const { setSelectedUserId, setProfile, setProfileLoading, setProfilePhoto } =
+  profileSlice.actions;
 export const profileReducer = profileSlice.reducer;
