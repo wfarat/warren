@@ -24,6 +24,7 @@ export type Comment = {
   likes: string[];
   replies: string[];
   createdAt: Timestamp;
+  isReply?: boolean;
 };
 
 export type MediaType = 'image' | 'video' | 'poll';

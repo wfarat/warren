@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   type DocumentData,
+  documentId,
   getDocs,
   increment,
   limit,
@@ -14,6 +15,7 @@ import {
   setDoc,
   startAfter,
   updateDoc,
+  where,
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '@/api/firebase';
@@ -116,39 +118,59 @@ export const postRepo = {
   /**
    * Adds a comment to the subcollection and increments the master counter.
    */
-  async addComment(postId: string, comment: Comment, commentId?: string): Promise<void> {
+  async addComment(
+    postId: string,
+    comment: Comment,
+    commentId?: string,
+    isReply?: boolean
+  ): Promise<void> {
     const masterPostRef = doc(db, 'posts', postId);
-    const commentDocRef = doc(db, 'posts', postId, 'comments', comment.id);
-
-    await setDoc(commentDocRef, comment);
-
+    if (!commentId) {
+      const commentDocRef = doc(db, 'posts', postId, 'comments', comment.id);
+      await setDoc(commentDocRef, comment);
+    }
     await updateDoc(masterPostRef, {
       commentsCount: increment(1),
     });
 
     if (commentId) {
-      const commentRef = doc(db, 'posts', postId, 'comments', commentId);
-      await updateDoc(commentRef, {
-        replies: arrayUnion(comment.id),
-      });
+      const replyDocRef = doc(db, 'posts', postId, 'replies', comment.id);
+      await setDoc(replyDocRef, comment);
+      if (isReply) {
+        const replyRef = doc(db, 'posts', postId, 'replies', commentId);
+        await updateDoc(replyRef, {
+          replies: arrayUnion(comment.id),
+        });
+      } else {
+        const commentRef = doc(db, 'posts', postId, 'comments', commentId);
+        await updateDoc(commentRef, {
+          replies: arrayUnion(comment.id),
+        });
+      }
     }
   },
 
   /**
    * Toggles a like on a comment.
-   * @param postId
-   * @param commentId
-   * @param currentUserId
-   * @param isLiked
+   * @param postId the ID of post
+   * @param commentId the ID of comment
+   * @param currentUserId the ID of liking user
+   * @param isLiked true if user likes the comment
+   * @param isReply true if the comment is a reply to another comment
    */
   async toggleLikeComment(
     postId: string,
     commentId: string,
     currentUserId: string,
-    isLiked: boolean
+    isLiked: boolean,
+    isReply?: boolean
   ): Promise<void> {
-    const commentRef = doc(db, 'posts', postId, 'comments', commentId);
-
+    let commentRef;
+    if (isReply) {
+      commentRef = doc(db, 'posts', postId, 'replies', commentId);
+    } else {
+      commentRef = doc(db, 'posts', postId, 'comments', commentId);
+    }
     await updateDoc(commentRef, {
       likes: isLiked ? arrayRemove(currentUserId) : arrayUnion(currentUserId),
     });
@@ -162,6 +184,29 @@ export const postRepo = {
     const commentsCollectionRef = collection(db, 'posts', postId, 'comments');
     const commentsSnapshot = await getDocs(commentsCollectionRef);
     return commentsSnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        }) as Comment
+    );
+  },
+
+  /**
+   * Reads all replies for a comment efficiently in a single query.
+   * Max 30 replies per execution due to Firestore 'in' query limits.
+   */
+  async readReplies(postId: string, replies: string[]): Promise<Comment[]> {
+    if (!replies || replies.length === 0) return [];
+
+    const batch = replies.slice(0, 30);
+
+    const commentsRef = collection(db, 'posts', postId, 'replies');
+    const q = query(commentsRef, where(documentId(), 'in', batch));
+
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map(
       (doc) =>
         ({
           id: doc.id,

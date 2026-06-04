@@ -6,13 +6,14 @@ import { useComments } from '@/features/post/useComments.ts';
 export function useRetryAction() {
   const { getLocation } = useLocation();
   const { login, logout } = useLogin();
-  const { getComments } = useComments();
+  const { getComments, getReplies } = useComments();
   const actionMap: Record<string, (payload?: Record<string, unknown>) => void> = {
     LOGIN: () => login(),
     LOGOUT: () => logout(),
     LOCATION: () => getLocation(),
     TIMELINE: () => fetchTimelinePage(true),
     COMMENTS: () => getComments(),
+    REPLIES: () => getReplies(),
   };
 
   return (action?: string) => {

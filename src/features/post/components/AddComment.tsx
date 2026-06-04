@@ -6,14 +6,18 @@ import Send from '@/assets/icons/Send.svg?react';
 
 type Props = {
   className?: string;
+  commentId?: string;
+  isReply?: boolean;
+  onSubmit?: () => void;
 };
-export function AddComment({ className }: Props) {
+export function AddComment({ className, commentId, onSubmit, isReply }: Props) {
   const [content, setContent] = useState('');
   const postId = useAppSelector(selectCurrentPostId);
   const dispatch = useAppDispatch();
   const handleCommentSubmit = () => {
     if (!content.trim() || !postId) return;
-    dispatch(addCommentAction(postId, content, () => setContent('')));
+    dispatch(addCommentAction(postId, content, () => setContent(''), commentId, isReply));
+    if (onSubmit) onSubmit();
   };
   return (
     <div className={className}>

@@ -9,6 +9,10 @@ interface PostState {
   postInput: PostInput;
   currentPostId?: string;
   comments: Comment[];
+  replies: Record<string, Comment[]>;
+  currentReplies?: string[];
+  commentIds: string[];
+  currentCommentId?: string;
 }
 
 const initialState: PostState = {
@@ -20,6 +24,8 @@ const initialState: PostState = {
     content: '',
   },
   comments: [],
+  replies: {},
+  commentIds: [],
 };
 
 export const postSlice = createSlice({
@@ -53,8 +59,29 @@ export const postSlice = createSlice({
     setComments: (state, action: PayloadAction<Comment[]>) => {
       state.comments = action.payload;
     },
-    addComment: (state, action: PayloadAction<Comment>) => {
-      state.comments.push(action.payload);
+    addComment: (
+      state,
+      action: PayloadAction<{
+        comment: Comment;
+        parentId?: string;
+      }>
+    ) => {
+      if (action.payload.parentId) {
+        const comment = state.comments.find((c) => c.id === action.payload.parentId);
+        comment?.replies.push(action.payload.comment.id);
+        state.replies[action.payload.parentId].push(action.payload.comment);
+        state.commentIds.push(action.payload.parentId);
+      } else {
+        state.comments.push(action.payload.comment);
+      }
+    },
+    setReplies: (state, action: PayloadAction<{ replies: Comment[]; id: string }>) => {
+      state.replies[action.payload.id] = action.payload.replies;
+    },
+    setCurrentReplies: (state, action: PayloadAction<{ replies: string[]; id: string }>) => {
+      state.currentReplies = action.payload.replies;
+      state.commentIds.push(action.payload.id);
+      state.currentCommentId = action.payload.id;
     },
   },
 });
@@ -68,5 +95,7 @@ export const {
   setCurrentPostId,
   setComments,
   addComment,
+  setReplies,
+  setCurrentReplies,
 } = postSlice.actions;
 export const postReducer = postSlice.reducer;

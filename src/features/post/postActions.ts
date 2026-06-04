@@ -75,7 +75,7 @@ export const createPostAction =
   };
 
 export const addCommentAction =
-  (postId: string, content: string, onSuccess: () => void, commentId?: string) =>
+  (postId: string, content: string, onSuccess: () => void, commentId?: string, isReply?: boolean) =>
   async (dispatch: AppDispatch, getState: () => RootState) => {
     const { user } = getState();
     const currentUser = user.currentUser;
@@ -92,11 +92,12 @@ export const addCommentAction =
       id: finalCommentId,
       likes: [],
       replies: [],
+      isReply: !!commentId,
     };
     try {
-      dispatch(addComment(newComment));
+      dispatch(addComment({ comment: newComment, parentId: commentId }));
       if (onSuccess) onSuccess();
-      await postRepo.addComment(postId, newComment, commentId);
+      await postRepo.addComment(postId, newComment, commentId, isReply);
       dispatch(setSuccess('Comment added successfully!'));
     } catch (error) {
       dispatch(setError({ message: 'Failed to add comment' }));

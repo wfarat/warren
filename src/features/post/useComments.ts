@@ -1,16 +1,23 @@
 import { useEffect } from 'react';
 import { postRepo } from '@/api';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectComments, selectCurrentPostId, setComments, setError } from '@/features';
+import { selectPost, setComments, setError, setReplies } from '@/features';
 
 export function useComments() {
-  const postId = useAppSelector(selectCurrentPostId);
-  const comments = useAppSelector(selectComments);
+  const {
+    currentPostId: postId,
+    comments,
+    replies,
+    currentReplies,
+    currentCommentId,
+  } = useAppSelector(selectPost);
   const dispatch = useAppDispatch();
   useEffect(() => {
     getComments();
   }, [postId]);
-
+  useEffect(() => {
+    getReplies();
+  }, [currentReplies]);
   const getComments = () => {
     if (!postId) return;
     postRepo
@@ -18,5 +25,12 @@ export function useComments() {
       .then((comments) => dispatch(setComments(comments)))
       .catch((error) => dispatch(setError({ message: error.message, retryAction: 'COMMENTS' })));
   };
-  return { comments, getComments };
+  const getReplies = () => {
+    if (!postId || !currentReplies || !currentCommentId) return;
+    postRepo
+      .readReplies(postId, currentReplies)
+      .then((replies) => dispatch(setReplies({ replies, id: currentCommentId })))
+      .catch((error) => dispatch(setError({ message: error.message, retryAction: 'REPLIES' })));
+  };
+  return { comments, replies, getComments, getReplies };
 }

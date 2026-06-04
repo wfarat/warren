@@ -3,13 +3,15 @@ import Heart from '@/assets/icons/Heart.svg?react';
 import type { Comment } from '@/types';
 import { getTimeText } from '@/utils/timeUtils.ts';
 import { postRepo } from '@/api';
-import { useAppSelector } from '@/store';
-import { AddComment, selectCurrentPostId, selectCurrentUserId } from '@/features';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { AddComment, selectCurrentUserId, selectPost, setCurrentReplies, useComments, } from '@/features';
 import { useEffect, useState } from 'react';
 
-export function Comment({ id, author, content, likes, createdAt, replies }: Comment) {
+export function Comment({ id, author, content, likes, createdAt, replies, isReply }: Comment) {
+  const dispatch = useAppDispatch();
   const repliesCount = replies.length;
-  const postId = useAppSelector(selectCurrentPostId);
+  const { currentPostId: postId, commentIds } = useAppSelector(selectPost);
+  const { replies: commentReplies } = useComments();
   const currentUserId = useAppSelector(selectCurrentUserId);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
@@ -23,7 +25,7 @@ export function Comment({ id, author, content, likes, createdAt, replies }: Comm
   };
   const handleLike = () => {
     if (!postId || !currentUserId) return;
-    postRepo.toggleLikeComment(postId, id, currentUserId, isLiked).then(() => {
+    postRepo.toggleLikeComment(postId, id, currentUserId, isLiked, isReply).then(() => {
       setIsLiked((prev) => !prev);
       setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
     });
@@ -55,8 +57,25 @@ export function Comment({ id, author, content, likes, createdAt, replies }: Comm
             {showAddComment ? 'Close' : 'Reply'}
           </button>
         </div>
-        {showAddComment && <AddComment className="relative" />}
-        {repliesCount} replies
+        {showAddComment && (
+          <AddComment
+            className="relative"
+            commentId={id}
+            onSubmit={handleReply}
+            isReply={isReply}
+          />
+        )}
+        {commentIds.includes(id)
+          ? (commentReplies[id] ?? []).map((reply) => <Comment key={reply.id} {...reply} />)
+          : repliesCount > 0 && (
+              <button
+                type="button"
+                className="rounded-lg hover:bg-grey-2 p-2 cursor-pointer"
+                onClick={() => dispatch(setCurrentReplies({ replies, id }))}
+              >
+                {repliesCount} replies
+              </button>
+            )}
       </div>
     </div>
   );
