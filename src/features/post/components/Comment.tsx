@@ -4,7 +4,13 @@ import type { Comment } from '@/types';
 import { getTimeText } from '@/utils/timeUtils.ts';
 import { postRepo } from '@/api';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { AddComment, selectCurrentUserId, selectPost, setCurrentReplies, useComments, } from '@/features';
+import {
+  AddComment,
+  selectCurrentUserId,
+  selectPost,
+  setCurrentReplies,
+  useComments,
+} from '@/features';
 import { useEffect, useState } from 'react';
 
 export function Comment({ id, author, content, likes, createdAt, replies, isReply }: Comment) {

@@ -18,7 +18,7 @@ const buttonVariants = cva('rounded-lg cursor-pointer transition-colors flex-cen
       md: 'h-10 w-36.5',
       lg: 'h-10 w-82 sm:w-50',
       xxl: 'h-10 w-64.5',
-      icon: 'h-10 w-10 rounded-full',
+      icon: 'h-8 w-8 rounded-lg',
     },
   },
   defaultVariants: {

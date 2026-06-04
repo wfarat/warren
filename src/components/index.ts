@@ -11,3 +11,4 @@ export * from "./common/right-bar/RightBar";
 export * from "./header/Header";
 export * from "./header/Search";
 export * from "./left-nav/LeftNav";
+export * from "./media/MediaDialog";

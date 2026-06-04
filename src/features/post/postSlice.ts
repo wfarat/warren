@@ -3,6 +3,7 @@ import type { Comment, Post, PostInput } from '@/types';
 
 interface PostState {
   timeline: Post[];
+  profilePosts: Post[];
   lastVisibleDoc: any | null;
   isLoading: boolean;
   hasMore: boolean;
@@ -13,10 +14,12 @@ interface PostState {
   currentReplies?: string[];
   commentIds: string[];
   currentCommentId?: string;
+  currentPost?: Post;
 }
 
 const initialState: PostState = {
   timeline: [],
+  profilePosts: [],
   lastVisibleDoc: null,
   isLoading: false,
   hasMore: true,
@@ -83,6 +86,12 @@ export const postSlice = createSlice({
       state.commentIds.push(action.payload.id);
       state.currentCommentId = action.payload.id;
     },
+    setProfilePosts: (state, action: PayloadAction<Post[]>) => {
+      state.profilePosts = action.payload;
+    },
+    setCurrentPost: (state, action: PayloadAction<Post>) => {
+      state.currentPost = action.payload;
+    },
   },
 });
 
@@ -97,5 +106,7 @@ export const {
   addComment,
   setReplies,
   setCurrentReplies,
+  setProfilePosts,
+  setCurrentPost,
 } = postSlice.actions;
 export const postReducer = postSlice.reducer;

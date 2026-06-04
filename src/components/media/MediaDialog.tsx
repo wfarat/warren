@@ -1,20 +1,20 @@
 import { Button, Dialog, Input } from '@/components';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { selectPostInput, setPostInput } from '@/features';
 import { type ChangeEvent, type DragEvent, useRef, useState } from 'react';
 import Upload from '@/assets/icons/Upload.svg?react';
 import { DialogSwitch } from '@/features/post/components/DialogSwitch.tsx';
 import { validUrl } from '@/validators';
 import type { Validity } from '@/types/util.ts';
+import type { Media } from '@/types';
 
 type Props = {
   type: 'image' | 'video' | null;
   onClose: () => void;
   setFile: (file: File) => void;
   file?: File;
+  action?: (media: Media) => void;
 };
 
-export function MediaDialog({ type, onClose, setFile, file }: Props) {
+export function MediaDialog({ type, onClose, setFile, file, action }: Props) {
   if (!type) return null;
 
   const [validity, setValidity] = useState<Validity>({ url: false });
@@ -22,8 +22,6 @@ export function MediaDialog({ type, onClose, setFile, file }: Props) {
   const [tab, setTab] = useState<'upload' | 'link'>('upload');
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
-  const postInput = useAppSelector(selectPostInput);
   const title = type === 'image' ? 'Add Image' : 'Add Video';
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,11 +63,12 @@ export function MediaDialog({ type, onClose, setFile, file }: Props) {
   };
 
   const handleSubmit = () => {
+    if (!action) return;
     if (tab === 'upload' && file) {
       const temporaryLocalUrl = URL.createObjectURL(file);
-      dispatch(setPostInput({ ...postInput, media: { type, url: temporaryLocalUrl } }));
+      action({ type, url: temporaryLocalUrl });
     } else {
-      dispatch(setPostInput({ ...postInput, media: { type, url } }));
+      action({ type, url });
     }
     onClose();
   };

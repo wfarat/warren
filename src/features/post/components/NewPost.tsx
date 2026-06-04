@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/store';
-import { createPostAction, MediaDialog, selectUserPhoto, useMediaDialog } from '@/features';
-import { Button, IconButton } from '@/components';
+import { createPostAction, selectUserPhoto, useMediaDialog } from '@/features';
+import { Button, IconButton, MediaDialog } from '@/components';
 import Picture from '@/assets/icons/Picture.svg?react';
 import Video from '@/assets/icons/Video.svg?react';
 import Poll from '@/assets/icons/Poll.svg?react';
@@ -8,6 +8,7 @@ import { selectPostInput, selectPostLoading } from '@/features/post/postSelector
 import { setPostInput } from '@/features/post/postSlice.ts';
 import { useState } from 'react';
 import { uploadImage } from '@/api/cloudinary.ts';
+import type { Media } from '@/types';
 
 export function NewPost() {
   const dispatch = useAppDispatch();
@@ -44,6 +45,9 @@ export function NewPost() {
     }
   };
 
+  const setMedia = (media: Media) => {
+    dispatch(setPostInput({ ...postInput, media }));
+  };
   const getButtonIntent = () => {
     return !isFeedLoading && postInput.content.trim() ? 'primary-dark' : 'disabled';
   };
@@ -96,6 +100,7 @@ export function NewPost() {
 
       {mediaDialog.isOpen && (
         <MediaDialog
+          action={setMedia}
           type={mediaDialog.mediaType}
           onClose={mediaDialog.close}
           setFile={setFile}

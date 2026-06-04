@@ -6,6 +6,7 @@
     "src/components",
     "src/features",
     "src/features/post",
+    "src/features/profile",
     "src/features/user",
     "src/features/notification",
     "src/types",

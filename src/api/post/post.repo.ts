@@ -5,6 +5,7 @@ import {
   doc,
   type DocumentData,
   documentId,
+  getDoc,
   getDocs,
   increment,
   limit,
@@ -102,6 +103,40 @@ export const postRepo = {
     };
   },
 
+  /**
+   * Fetches only the posts written by a specific user (For Profile Pages)
+   */
+  async getUserProfilePosts(targetUserId: string, pageSize = 15) {
+    const postsRef = collection(db, 'posts');
+    const profileQuery = query(
+      postsRef,
+      where('author.userId', '==', targetUserId),
+      orderBy('createdAt', 'desc'),
+      limit(pageSize)
+    );
+    try {
+      const snapshot = await getDocs(profileQuery);
+      return snapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as Post
+      );
+    } catch (error) {
+      console.error('Error fetching profile posts:', error);
+    }
+  },
+
+  async getSinglePost(postId: string) {
+    const postRef = doc(db, 'posts', postId);
+    try {
+      const snapshot = await getDoc(postRef);
+      return snapshot.data() as Post;
+    } catch (error) {
+      console.error('Error fetching post:', error);
+    }
+  },
   /**
    * Triggers a like.
    */

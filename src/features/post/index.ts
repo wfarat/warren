@@ -11,7 +11,7 @@ export * from "./components/AddComment";
 export * from "./components/Comment";
 export * from "./components/Comments";
 export * from "./components/DialogSwitch";
-export * from "./components/MediaDialog";
 export * from "./components/NewPost";
 export * from "./components/PostCard";
 export * from "./components/PostList";
+export * from "./components/Timeline";

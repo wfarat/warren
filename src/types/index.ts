@@ -3,5 +3,6 @@
  */
 
 export * from "./post";
+export * from "./profile";
 export * from "./svg";
 export * from "./util";

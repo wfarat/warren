@@ -1,6 +1,15 @@
 import { type AppDispatch, type RootState } from '@/store';
 import { postRepo } from '@/api';
-import { addComment, appendFeedPage, insertNewPost, setError, setFeedLoading, setSuccess, } from '@/features';
+import {
+  addComment,
+  appendFeedPage,
+  insertNewPost,
+  setCurrentPost,
+  setError,
+  setFeedLoading,
+  setProfilePosts,
+  setSuccess,
+} from '@/features';
 import type { Comment, Post, PostInput } from '@/types';
 import { Timestamp } from 'firebase/firestore';
 
@@ -34,6 +43,46 @@ export const fetchTimelinePage =
     }
   };
 
+/**
+ * Thunk action to pull the profile posts from the repository layer
+ */
+export const fetchProfilePosts = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+  const { post, profile } = getState();
+  if (post.isLoading || !profile.selectedUserId) return;
+  dispatch(setFeedLoading(true));
+
+  try {
+    const posts = await postRepo.getUserProfilePosts(profile.selectedUserId);
+    if (posts) {
+      dispatch(setProfilePosts(posts));
+    }
+  } catch (error) {
+    dispatch(setError({ message: 'Failed to fetch profile posts', retryAction: 'PROFILE' }));
+  } finally {
+    dispatch(setFeedLoading(false));
+  }
+};
+
+/**
+ * Thunk action to pull one post from the repository layer
+ */
+export const fetchPost =
+  (postId: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const { post } = getState();
+    if (post.isLoading) return;
+    dispatch(setFeedLoading(true));
+
+    try {
+      const post = await postRepo.getSinglePost(postId);
+      if (post) {
+        dispatch(setCurrentPost(post));
+      }
+    } catch (error) {
+      dispatch(setError({ message: 'Failed to fetch post', retryAction: 'POST' }));
+    } finally {
+      dispatch(setFeedLoading(false));
+    }
+  };
 /**
  * Thunk action to create a new post and dispatch the action to the store
  */

@@ -1,5 +1,5 @@
 import { useLocation } from './useLocation';
-import { useLogin } from '@/features';
+import { fetchProfilePosts, useLogin } from '@/features';
 import { fetchTimelinePage } from '@/features/post/postActions.ts';
 import { useComments } from '@/features/post/useComments.ts';
 
@@ -14,6 +14,7 @@ export function useRetryAction() {
     TIMELINE: () => fetchTimelinePage(true),
     COMMENTS: () => getComments(),
     REPLIES: () => getReplies(),
+    PROFILE: () => fetchProfilePosts(),
   };
 
   return (action?: string) => {

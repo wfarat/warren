@@ -2,6 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 @import 'tailwindcss';
 
+
+:root {
+    margin: 0 auto;
+    max-width: 1440px;
+    background-color: var(--color-bg-2);
+    border: 1px solid var(--color-grey-2);
+}
+
 @theme {
     --font-base: 'Source Sans Pro', sans-serif;
     --font-heading: 'Fira Sans', sans-serif;

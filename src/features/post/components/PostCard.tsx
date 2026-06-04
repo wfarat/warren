@@ -1,4 +1,3 @@
-// src/features/post/PostCard.tsx
 import { useEffect, useState } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/api/firebase';
@@ -9,25 +8,29 @@ import Like from '@/assets/icons/Like.svg?react';
 import Share from '@/assets/icons/Share.svg?react';
 import Comment from '@/assets/icons/Comment.svg?react';
 import More from '@/assets/icons/More.svg?react';
-import { fill } from '@cloudinary/url-gen/actions/resize';
+import { fill, scale } from '@cloudinary/url-gen/actions/resize';
 import { AdvancedImage } from '@cloudinary/react';
 import { cld } from '@/api/cloudinary.ts';
-import { useAppDispatch } from '@/store';
-import { setCurrentPostId } from '@/features';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { selectCurrentUserId, setCurrentPost, setCurrentPostId } from '@/features';
 import { getTimeText } from '@/utils/timeUtils.ts';
+import { useNavigate } from 'react-router';
+import { twMerge } from 'tailwind-merge';
 
 type PostCardProps = {
   timelinePost: Post;
-  currentUserId: string;
+  full?: boolean;
+  onProfile?: boolean;
 };
 
-export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
+export function PostCard({ timelinePost, full, onProfile }: PostCardProps) {
   const [liveLikesCount, setLiveLikesCount] = useState(timelinePost.likesCount);
   const [liveCommentsCount, setLiveCommentsCount] = useState(timelinePost.commentsCount);
   const [liveSharesCount, setLiveSharesCount] = useState(timelinePost.sharesCount);
   const [isLiked, setIsLiked] = useState(false);
+  const currentUserId = useAppSelector(selectCurrentUserId);
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   useEffect(() => {
     const masterPostRef = doc(db, 'posts', timelinePost.id);
 
@@ -38,7 +41,9 @@ export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
         setLiveCommentsCount(data.commentsCount || 0);
         setLiveSharesCount(data.sharesCount || 0);
         const likesArray: string[] = data.likes || [];
-        setIsLiked(likesArray.includes(currentUserId));
+        if (currentUserId) {
+          setIsLiked(likesArray.includes(currentUserId));
+        }
       }
     });
 
@@ -46,6 +51,7 @@ export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
   }, [timelinePost.id, currentUserId]);
 
   const handleLikeToggle = async () => {
+    if (!currentUserId) return;
     try {
       // Optimistic UI updates feel instantaneous to users
       setIsLiked(!isLiked);
@@ -59,8 +65,18 @@ export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
 
   const handleComment = () => {
     dispatch(setCurrentPostId(timelinePost.id));
+    if (onProfile) {
+      dispatch(setCurrentPost(timelinePost));
+      navigate(`/post/${timelinePost.id}`);
+    }
   };
-
+  const postImage = (publicId: string) => {
+    let image = cld.image(publicId);
+    if (full) {
+      return image.resize(scale().width(800));
+    }
+    return image.resize(fill().width(800).height(400));
+  };
   return (
     <div className="border border-grey-2 bg-bg-3 p-6 relative flex flex-col gap-4 rounded-xl drop-shadow-bg-3">
       <button
@@ -83,12 +99,17 @@ export function PostCard({ timelinePost, currentUserId }: PostCardProps) {
 
       <p className="text-on-surface-variant mb-4">{timelinePost.content}</p>
       {timelinePost.media && timelinePost.media.type === 'image' && (
-        <div className="relative w-full max-h-100 aspect-video rounded-lg border border-grey-2 overflow-hidden bg-bg-2">
+        <div
+          className={twMerge(
+            'relative w-full rounded-lg border border-grey-2 overflow-hidden bg-bg-2',
+            full ? 'h-auto aspect-auto' : 'max-h-100 aspect-video'
+          )}
+        >
           {timelinePost.media.publicId && (
             <AdvancedImage
               alt=""
               className="w-full h-full object-cover"
-              cldImg={cld.image(timelinePost.media.publicId).resize(fill().width(800).height(400))}
+              cldImg={postImage(timelinePost.media.publicId)}
             />
           )}
           {timelinePost.media.url && (
