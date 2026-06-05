@@ -6,13 +6,9 @@ type ProfileState = {
   profile: Profile;
   isLoading: boolean;
 };
+
 const initialState: ProfileState = {
-  profile: {
-    id: '',
-    name: '',
-    followers: 0,
-    following: 0,
-  },
+  profile: { id: '', name: '', followers: 0, following: 0 },
   isLoading: false,
 };
 
@@ -29,8 +25,17 @@ const profileSlice = createSlice({
     setProfile: (state, action: PayloadAction<Profile>) => {
       state.profile = action.payload;
     },
+    updateProfileSuccess: (state, action: PayloadAction<Partial<Profile>>) => {
+      state.profile = { ...state.profile, ...action.payload };
+    },
   },
 });
 
-export const { setSelectedUserId, setProfile, setProfileLoading } = profileSlice.actions;
+export const {
+  setSelectedUserId,
+  setProfile,
+  setProfileLoading,
+  updateProfileSuccess, // Export the new action
+} = profileSlice.actions;
+
 export const profileReducer = profileSlice.reducer;

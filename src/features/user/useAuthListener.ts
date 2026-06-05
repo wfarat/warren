@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'; // 🌟 Added getDoc
 import { auth, db, uploadProfilePicture } from '@/api';
 import { useAppDispatch } from '@/store';
 import { clearUser, setUser } from '@/features';
+import type { Profile } from '@/types';
 
 export function useAuthListener() {
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ export function useAuthListener() {
           name: firebaseUser.displayName || '',
           email: firebaseUser.email || '',
           given_name: firebaseUser.displayName?.split(' ')[0] || '',
-          photoUrl: firebaseUser.photoURL || '',
+          photo: { url: firebaseUser.photoURL || '', publicId: '' },
         };
 
         try {
@@ -30,6 +31,12 @@ export function useAuthListener() {
               followers: 0,
               following: 0,
             });
+          } else {
+            const profile = userDocSnap.data() as Profile;
+            userData.name = profile.name;
+            userData.given_name = profile.name.split(' ')[0];
+            userData.photo.url = '';
+            userData.photo.publicId = `users/${firebaseUser.uid}/profile`;
           }
         } catch (e) {
           console.error('Could not initialize user document in Firestore:', e);

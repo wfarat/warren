@@ -1,10 +1,11 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { Photo } from '@/types';
 
 type UserData = {
   id: string;
   given_name?: string;
   name?: string;
-  photoUrl?: string;
+  photo?: Photo;
   email?: string;
 };
 

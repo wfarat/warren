@@ -83,6 +83,7 @@ export const fetchPost =
       dispatch(setFeedLoading(false));
     }
   };
+
 /**
  * Thunk action to create a new post and dispatch the action to the store
  */
@@ -100,7 +101,6 @@ export const createPostAction =
       author: {
         userId: currentUser.id,
         displayName: currentUser.name || 'Anonymous',
-        photoUrl: currentUser.photoUrl || '',
       },
       likesCount: 0,
       commentsCount: 0,
@@ -134,7 +134,6 @@ export const addCommentAction =
       author: {
         userId: currentUser.id,
         displayName: currentUser.name || 'Anonymous',
-        photoUrl: currentUser.photoUrl || '',
       },
       content,
       createdAt: Timestamp.fromDate(new Date()),

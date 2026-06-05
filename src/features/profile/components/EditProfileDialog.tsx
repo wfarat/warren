@@ -15,7 +15,7 @@ type Props = {
 
 type Tab = 'general' | 'personal' | 'work';
 
-type FormValues = {
+export type FormValues = {
   name: string;
   location: string;
   bio: string;

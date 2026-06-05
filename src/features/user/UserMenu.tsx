@@ -4,10 +4,13 @@ import { selectUser, setError, setSuccess, useLogin } from '@/features';
 import Bell from '@/assets/icons/Bell.svg?react';
 import Arrow from '@/assets/icons/Arrow.svg?react';
 import { Button } from '@/components';
+import { AdvancedImage } from '@cloudinary/react';
+import { cld } from '@/api';
+import { fill } from '@cloudinary/url-gen/actions/resize';
 
 export function UserMenu() {
   const { isAuthenticated, currentUser } = useAppSelector(selectUser);
-  const { photoUrl, given_name } = currentUser || {};
+  const { photo, given_name } = currentUser || {};
   const { login, logout } = useLogin();
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
@@ -52,8 +55,14 @@ export function UserMenu() {
           <Bell />
         </div>
 
-        {photoUrl && (
-          <img className="rounded-full w-10 h-10" src={photoUrl} alt="User profile picture" />
+        {photo?.publicId && (
+          <AdvancedImage
+            cldImg={cld.image(photo.publicId).resize(fill().width(40).height(40))}
+            className="rounded-full w-10 h-10"
+          />
+        )}
+        {photo?.url && (
+          <img className="rounded-full w-10 h-10" src={photo.url} alt="User profile picture" />
         )}
 
         <span className="text-grey-4 font-semibold">{given_name}</span>

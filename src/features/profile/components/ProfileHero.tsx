@@ -15,7 +15,7 @@ import { useState } from 'react';
 import type { Media } from '@/types';
 import Edit from '@/assets/icons/Edit.svg?react';
 
-export function ProfileHero() {
+export function ProfileHero({ openDialog }: { openDialog: () => void }) {
   const { profile } = useAppSelector(selectProfile);
   const [file, setFile] = useState<File | undefined>();
   const cacheBuster = useAppSelector(selectAvatarCacheBuster);
@@ -37,7 +37,27 @@ export function ProfileHero() {
   const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
   return (
     <div>
-      <AdvancedImage cldImg={cld.image('cld-sample-2').resize(fill().height(320).width(1240))} />
+      <div className="w-full h-120 overflow-hidden bg-bg-2 border-b border-grey-2 relative">
+        {profile.banner?.publicId ? (
+          <AdvancedImage
+            className="w-full h-full object-cover"
+            cldImg={cld.image(profile.banner.publicId).resize(fill().height(480).width(1240))}
+            alt="User profile banner background"
+          />
+        ) : profile.banner?.url ? (
+          <img
+            src={profile.banner.url}
+            className="w-full h-full object-cover"
+            alt="External profile banner backdrop"
+          />
+        ) : (
+          <AdvancedImage
+            className="w-full h-full object-cover opacity-60"
+            cldImg={cld.image('cld-sample-2').resize(fill().height(480).width(1240))}
+            alt="Default placeholder workspace backdrop banner"
+          />
+        )}
+      </div>
       <div className="flex items-start">
         <div className="-translate-y-1/2 pl-8">
           <div className="relative w-48 h-48">
@@ -63,7 +83,7 @@ export function ProfileHero() {
         </div>
         <div className="flex-between w-full p-6">
           <h2>{profile.name}</h2>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={openDialog}>
             <Edit />
             Edit profile
           </Button>

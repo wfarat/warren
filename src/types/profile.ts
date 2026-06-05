@@ -14,3 +14,11 @@ export type Profile = {
   followers: number;
   following: number;
 };
+
+export type UpdateProfileInput = {
+  name: string;
+  location: string;
+  bio: string;
+  bannerUrl?: string;
+  bannerFile?: File;
+};

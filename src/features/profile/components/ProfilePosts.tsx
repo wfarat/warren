@@ -14,7 +14,7 @@ import Location from '@/assets/icons/Location.svg?react';
 import Link from '@/assets/icons/Link.svg?react';
 import News from '@/assets/icons/News.svg?react';
 
-export function ProfilePosts({ userId }: { userId: string }) {
+export function ProfilePosts({ userId, openDialog }: { userId: string; openDialog: () => void }) {
   const dispatch = useAppDispatch();
   const profilePosts = useAppSelector(selectProfilePosts);
   const { selectedUserId, profile } = useAppSelector(selectProfile);
@@ -32,7 +32,7 @@ export function ProfilePosts({ userId }: { userId: string }) {
         {currentUserId === userId && <NewPost />}
         <PostList posts={profilePosts} onProfile />
       </div>
-      <RightBar className="min-w-76">
+      <RightBar className="max-w-76">
         <Card>
           <h3 className="text-on-surface">Intro</h3>
           <p className="text-on-surface-variant">{profile.bio}</p>
@@ -59,7 +59,7 @@ export function ProfilePosts({ userId }: { userId: string }) {
             <News className="fill-grey-1" />
             Followed by <strong className="text-on-surface">{profile.followers}</strong> people
           </div>
-          <Button intent="grey" size="xxl">
+          <Button onClick={openDialog} intent="grey" size="xxl">
             Edit Details
           </Button>
         </Card>
