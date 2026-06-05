@@ -8,7 +8,7 @@ const buttonVariants = cva('rounded-lg cursor-pointer transition-colors flex-cen
       primary: 'bg-primary hover:bg-primary-light text-on-primary active:bg-primary-dark',
       'primary-dark': 'bg-primary-container text-on-primary-container hover:bg-inverse-primary',
       secondary: 'bg-secondary-container/20 hover:bg-secondary-container/40 text-secondary-light',
-      grey: 'bg-bg-3 border border-grey-2 hover:bg-grey-2',
+      grey: 'bg-grey-2 border border-grey-1/20 hover:bg-grey-2 text-on-surface',
       outlined: 'border border-primary text-primary hover:bg-primary hover:text-on-primary',
       disabled: 'bg-grey-3 cursor-not-allowed text-white/40',
     },

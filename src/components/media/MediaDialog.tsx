@@ -1,19 +1,23 @@
 import { Button, Dialog, Input, TabNav, type TabOption } from '@/components';
-import { type ChangeEvent, type DragEvent, useRef, useState } from 'react';
+import { type ChangeEvent, type DragEvent, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import Upload from '@/assets/icons/Upload.svg?react';
 import { validUrl } from '@/validators';
-import type { Validity } from '@/types/util.ts';
 import type { Media } from '@/types';
 
 type Props = {
   type: 'image' | 'video' | null;
   onClose: () => void;
-  setFile: (file: File) => void;
+  setFile: (file: File | undefined) => void;
   file?: File;
   action?: (media: Media) => void;
 };
 
 type MediaTab = 'upload' | 'link';
+
+type FormValues = {
+  url: string;
+};
 
 const TAB_OPTIONS: TabOption<MediaTab>[] = [
   { id: 'upload', label: 'Upload' },
@@ -23,14 +27,31 @@ const TAB_OPTIONS: TabOption<MediaTab>[] = [
 export function MediaDialog({ type, onClose, setFile, file, action }: Props) {
   if (!type) return null;
 
-  const [validity, setValidity] = useState<Validity>({ url: false });
-  const [url, setUrl] = useState<string>('');
   const [tab, setTab] = useState<MediaTab>('upload');
   const [isDragging, setIsDragging] = useState<boolean>(false);
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const title = type === 'image' ? 'Add Image' : 'Add Video';
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+  } = useForm<FormValues>({
+    mode: 'onChange',
+    defaultValues: { url: '' },
+  });
+
+  const urlValue = watch('url');
+
+  useEffect(() => {
+    if (tab === 'upload') {
+      setValue('url', '');
+    } else {
+      setFile(undefined);
+    }
+  }, [tab, setValue, setFile]);
 
   const handleBrowseClick = () => {
     fileInputRef.current?.click();
@@ -38,9 +59,7 @@ export function MediaDialog({ type, onClose, setFile, file, action }: Props) {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-      setValidity({ url: true });
+      setFile(e.target.files[0]);
     }
   };
 
@@ -64,26 +83,33 @@ export function MediaDialog({ type, onClose, setFile, file, action }: Props) {
       if (type === 'video' && !droppedFile.type.startsWith('video/')) return;
 
       setFile(droppedFile);
-      setValidity({ url: true });
     }
   };
 
-  const handleSubmit = () => {
+  const onFormSubmit = (data: FormValues) => {
     if (!action) return;
+
     if (tab === 'upload' && file) {
       const temporaryLocalUrl = URL.createObjectURL(file);
       action({ type, url: temporaryLocalUrl });
-    } else {
-      action({ type, url });
+    } else if (tab === 'link' && data.url) {
+      action({ type, url: data.url });
     }
+
     onClose();
   };
 
-  const isFormInvalid = tab === 'link' ? !validity.url : !file;
+  const isFormInvalid = tab === 'link' ? !isValid || !urlValue : !file;
 
   return (
-    <Dialog onClose={onClose} title={title} onSubmit={handleSubmit} disabled={isFormInvalid}>
+    <Dialog
+      onClose={onClose}
+      title={title}
+      onSubmit={handleSubmit(onFormSubmit)}
+      disabled={isFormInvalid}
+    >
       <TabNav options={TAB_OPTIONS} activeTab={tab} onChange={setTab} />
+
       <div className="p-12 w-full">
         {tab === 'upload' && (
           <div
@@ -115,17 +141,18 @@ export function MediaDialog({ type, onClose, setFile, file, action }: Props) {
             </Button>
           </div>
         )}
+
         {tab === 'link' && (
           <div className="flex-center flex-col gap-4 p-12">
             <span className="text-on-surface">Link to media</span>
             <Input
               type="text"
-              value={url}
-              name="url"
-              onChange={(e) => setUrl(e.target.value)}
               placeholder="Paste link here"
-              validation={(value) => (validUrl(value) ? '' : 'Invalid URL')}
-              setValid={setValidity}
+              error={errors.url?.message}
+              {...register('url', {
+                required: 'A destination address link is required',
+                validate: (value) => validUrl(value) || 'Invalid URL layout format',
+              })}
             />
           </div>
         )}

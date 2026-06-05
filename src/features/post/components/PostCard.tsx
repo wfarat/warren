@@ -12,7 +12,12 @@ import { fill, scale } from '@cloudinary/url-gen/actions/resize';
 import { AdvancedImage } from '@cloudinary/react';
 import { cld } from '@/api/cloudinary.ts';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectAvatarCacheBuster, selectCurrentUserId, setCurrentPost, setCurrentPostId, } from '@/features';
+import {
+  selectAvatarCacheBuster,
+  selectCurrentUserId,
+  setCurrentPost,
+  setCurrentPostId,
+} from '@/features';
 import { getTimeText } from '@/utils/timeUtils.ts';
 import { useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
