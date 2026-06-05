@@ -1,10 +1,15 @@
 import { AdvancedImage } from '@cloudinary/react';
-import { cld, uploadImage, userRepo } from '@/api';
+import { cld, uploadProfilePicture } from '@/api';
 import { fill } from '@cloudinary/url-gen/actions/resize';
 import { Button, MediaDialog } from '@/components';
 import Camera from '@/assets/icons/Camera.svg?react';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectCurrentUserId, selectProfile, setProfilePhoto } from '@/features';
+import {
+  selectAvatarCacheBuster,
+  selectCurrentUserId,
+  selectProfile,
+  triggerAvatarRefresh,
+} from '@/features';
 import { useMediaDialog } from '@/hooks';
 import { useState } from 'react';
 import type { Media } from '@/types';
@@ -13,40 +18,44 @@ import Edit from '@/assets/icons/Edit.svg?react';
 export function ProfileHero() {
   const { profile } = useAppSelector(selectProfile);
   const [file, setFile] = useState<File | undefined>();
+  const cacheBuster = useAppSelector(selectAvatarCacheBuster);
   const currentUserId = useAppSelector(selectCurrentUserId);
   const { open, close, isOpen } = useMediaDialog();
   const dispatch = useAppDispatch();
   const handlePhoto = async (media: Media) => {
     if (file) {
-      const publicId = await uploadImage(file);
-      dispatch(setProfilePhoto({ publicId }));
-      await userRepo.updateUserProfile(profile.id, { photo: { publicId } });
+      await uploadProfilePicture(file, profile.id);
     } else if (media.url) {
-      dispatch(setProfilePhoto({ url: media.url }));
-      await userRepo.updateUserProfile(profile.id, { photo: { url: media.url } });
+      await uploadProfilePicture(media.url, profile.id);
     }
+    dispatch(triggerAvatarRefresh());
   };
+  const avatarImage = cld
+    .image(`users/${profile.id}/profile`)
+    .resize(fill().width(192).height(192))
+    .format('auto');
+  const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
   return (
     <div>
       <AdvancedImage cldImg={cld.image('cld-sample-2').resize(fill().height(320).width(1240))} />
       <div className="flex items-start">
         <div className="-translate-y-1/2 pl-8">
           <div className="relative w-48 h-48">
-            {profile.photo?.url && (
-              <img
-                src={profile.photo.url}
-                alt="profile"
-                className="w-full h-full rounded-xl border-4 border-bg-2 shadow-xl"
-              />
-            )}
-            {profile.photo?.publicId && (
-              <AdvancedImage
-                className="rounded-xl border-4 border-bg-2 shadow-xl w-full h-full   "
-                cldImg={cld.image(profile.photo?.publicId).resize(fill().height(192).width(192))}
-              />
-            )}
+            <img
+              alt=""
+              className="rounded-xl border-4 border-bg-2 shadow-xl w-full h-full   "
+              src={freshAvatarUrl}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src =
+                  'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
+              }}
+            />
             {profile.id === currentUserId && (
-              <Button size="icon" onClick={open} className="absolute bottom-2 right-2">
+              <Button
+                size="icon"
+                onClick={() => open('image')}
+                className="absolute bottom-2 right-2"
+              >
                 <Camera className="w-4 h-4" />
               </Button>
             )}

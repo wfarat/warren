@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore'; // 🌟 Added getDoc
-import { auth, db } from '@/api';
+import { auth, db, uploadProfilePicture } from '@/api';
 import { useAppDispatch } from '@/store';
 import { clearUser, setUser } from '@/features';
 
@@ -22,11 +22,10 @@ export function useAuthListener() {
         try {
           const userDocRef = doc(db, 'users', firebaseUser.uid);
           const userDocSnap = await getDoc(userDocRef);
-
           if (!userDocSnap.exists()) {
+            await uploadProfilePicture(firebaseUser.photoURL || '', firebaseUser.uid);
             await setDoc(userDocRef, {
               name: userData.name,
-              photo: { url: userData.photoUrl },
               updatedAt: new Date().toISOString(),
               followers: 0,
               following: 0,

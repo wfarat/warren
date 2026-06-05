@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { Photo, Profile } from '@/types';
+import type { Profile } from '@/types';
 
 type ProfileState = {
   selectedUserId?: string;
@@ -8,6 +8,7 @@ type ProfileState = {
 };
 const initialState: ProfileState = {
   profile: {
+    id: '',
     name: '',
     followers: 0,
     following: 0,
@@ -28,12 +29,8 @@ const profileSlice = createSlice({
     setProfile: (state, action: PayloadAction<Profile>) => {
       state.profile = action.payload;
     },
-    setProfilePhoto: (state, action: PayloadAction<Photo>) => {
-      state.profile.photo = action.payload;
-    },
   },
 });
 
-export const { setSelectedUserId, setProfile, setProfileLoading, setProfilePhoto } =
-  profileSlice.actions;
+export const { setSelectedUserId, setProfile, setProfileLoading } = profileSlice.actions;
 export const profileReducer = profileSlice.reducer;

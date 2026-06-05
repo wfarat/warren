@@ -6,9 +6,14 @@ import tseslint from 'typescript-eslint';
 import { defineConfig, includeIgnoreFile } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import stylistic from '@stylistic/eslint-plugin';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const gitignorePath = path.resolve(__dirname, '.gitignore');
 export default defineConfig([
-  includeIgnoreFile('.gitignore', { gitignoreResolution: true }),
+  includeIgnoreFile(gitignorePath),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

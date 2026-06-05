@@ -3,7 +3,7 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/api/firebase';
 import { postRepo } from '@/api';
 import type { Post } from '@/types';
-import { IconButton } from '@/components';
+import { Card, IconButton } from '@/components';
 import Like from '@/assets/icons/Like.svg?react';
 import Share from '@/assets/icons/Share.svg?react';
 import Comment from '@/assets/icons/Comment.svg?react';
@@ -12,7 +12,7 @@ import { fill, scale } from '@cloudinary/url-gen/actions/resize';
 import { AdvancedImage } from '@cloudinary/react';
 import { cld } from '@/api/cloudinary.ts';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectCurrentUserId, setCurrentPost, setCurrentPostId } from '@/features';
+import { selectAvatarCacheBuster, selectCurrentUserId, setCurrentPost, setCurrentPostId, } from '@/features';
 import { getTimeText } from '@/utils/timeUtils.ts';
 import { useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
@@ -29,6 +29,7 @@ export function PostCard({ timelinePost, full, onProfile }: PostCardProps) {
   const [liveSharesCount, setLiveSharesCount] = useState(timelinePost.sharesCount);
   const [isLiked, setIsLiked] = useState(false);
   const currentUserId = useAppSelector(selectCurrentUserId);
+  const cacheBuster = useAppSelector(selectAvatarCacheBuster);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   useEffect(() => {
@@ -77,8 +78,13 @@ export function PostCard({ timelinePost, full, onProfile }: PostCardProps) {
     }
     return image.resize(fill().width(800).height(400));
   };
+  const avatarImage = cld
+    .image(`users/${timelinePost.author.userId}/profile`)
+    .resize(fill().width(40).height(40))
+    .format('auto');
+  const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
   return (
-    <div className="border border-grey-2 bg-bg-3 p-6 relative flex flex-col gap-4 rounded-xl drop-shadow-bg-3">
+    <Card>
       <button
         type="button"
         className="flex-center border-none absolute top-2 right-2 w-10 h-10 cursor-pointer rounded-full hover:bg-grey-2"
@@ -86,7 +92,17 @@ export function PostCard({ timelinePost, full, onProfile }: PostCardProps) {
         <More />
       </button>
       <div className="flex items-center gap-3 mb-3">
-        <img src={timelinePost.author.photoUrl} className="w-10 h-10 rounded-full" alt="" />
+        <div className="w-10 h-10 rounded-full border border-grey-2 overflow-hidden bg-bg-2">
+          <img
+            src={freshAvatarUrl}
+            alt=""
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src =
+                'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
+            }}
+          />
+        </div>
         <div className="flex flex-col gap-1">
           <span className="font-semibold text-shadow-on-surface">
             {timelinePost.author.displayName}
@@ -134,6 +150,6 @@ export function PostCard({ timelinePost, full, onProfile }: PostCardProps) {
         />
         <IconButton icon={Share} text={String(liveSharesCount)} textClass="text-grey-1" />
       </div>
-    </div>
+    </Card>
   );
 }

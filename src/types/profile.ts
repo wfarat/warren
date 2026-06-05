@@ -7,7 +7,6 @@ export type Profile = {
   id: string;
   name: string;
   profession?: string;
-  photo?: Photo;
   banner?: Photo;
   bio?: string;
   location?: string;

@@ -3,6 +3,7 @@
  */
 
 export * from "./common/Button";
+export * from "./common/Card";
 export * from "./common/IconButton";
 export * from "./common/Input";
 export * from "./common/Toast";

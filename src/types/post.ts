@@ -3,7 +3,6 @@ import { Timestamp } from 'firebase/firestore';
 export type Author = {
   userId: string;
   displayName: string;
-  photoUrl: string;
 };
 
 export type PostInput = {

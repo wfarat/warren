@@ -1,10 +1,8 @@
-import { NewPost } from '@/features/post';
 import { fetchProfile, ProfileHero, ProfilePosts } from '@/features/profile';
-import { RightBar, TabNav, type TabOption } from '@/components';
-import { useAppDispatch, useAppSelector } from '@/store';
+import { TabNav, type TabOption } from '@/components';
+import { useAppDispatch } from '@/store';
 import { useParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import { selectCurrentUserId } from '@/features';
 
 type ProfileTab = 'posts' | 'photos' | 'about' | 'more';
 
@@ -17,7 +15,6 @@ const TAB_OPTIONS: TabOption<ProfileTab>[] = [
 export default function Profile() {
   const { userId } = useParams();
   const [tab, setTab] = useState('posts');
-  const currentUserId = useAppSelector(selectCurrentUserId);
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (userId) {
@@ -26,16 +23,17 @@ export default function Profile() {
   });
   return (
     <div className="w-full ">
-      <main className="w-full">
-        <ProfileHero />
-        <TabNav options={TAB_OPTIONS} activeTab={tab} onChange={setTab} />
-        <div className="flex gap-8">
-          <div className="flex flex-1 flex-col gap-6">
-            {currentUserId === userId && <NewPost />}
-            <ProfilePosts />
-          </div>
-          <RightBar>fasdf</RightBar>
+      <main className="w-full relative">
+        <div className="relative">
+          <ProfileHero />
+          <TabNav
+            className="absolute bottom-10"
+            options={TAB_OPTIONS}
+            activeTab={tab}
+            onChange={setTab}
+          />
         </div>
+        {tab === 'posts' && <ProfilePosts userId={userId} />}
       </main>
     </div>
   );

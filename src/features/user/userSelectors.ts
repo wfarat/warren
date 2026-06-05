@@ -6,3 +6,4 @@ export const selectCurrentUserId = (state: RootState) => state.user.currentUser?
 export const selectUserPhoto = (state: RootState) => state.user.currentUser?.photoUrl;
 export const selectIsAuthenticated = (state: RootState) => state.user.isAuthenticated;
 export const selectLocation = (state: RootState) => state.user.location;
+export const selectAvatarCacheBuster = (state: RootState) => state.user.avatarCacheBuster;

@@ -11,12 +11,14 @@ type UserData = {
 interface UserState {
   currentUser: UserData | null;
   isAuthenticated: boolean;
+  avatarCacheBuster: string;
   location: { lat: number; lng: number };
 }
 
 const initialState: UserState = {
   currentUser: null,
   isAuthenticated: false,
+  avatarCacheBuster: Date.now().toString(),
   location: { lat: 54.352, lng: 18.6466 }, // Defaults to Gdańsk!
 };
 
@@ -35,8 +37,11 @@ const userSlice = createSlice({
     setUserLocation(state, action: PayloadAction<{ lat: number; lng: number }>) {
       state.location = action.payload;
     },
+    triggerAvatarRefresh: (state) => {
+      state.avatarCacheBuster = Date.now().toString();
+    },
   },
 });
 
-export const { setUser, clearUser, setUserLocation } = userSlice.actions;
+export const { setUser, clearUser, setUserLocation, triggerAvatarRefresh } = userSlice.actions;
 export const userReducer = userSlice.reducer;

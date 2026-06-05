@@ -1,19 +1,21 @@
 import { useAppDispatch, useAppSelector } from '@/store';
-import { createPostAction, selectUserPhoto } from '@/features';
-import { Button, IconButton, MediaDialog } from '@/components';
+import { createPostAction, selectAvatarCacheBuster, selectCurrentUserId } from '@/features';
+import { Button, Card, IconButton, MediaDialog } from '@/components';
 import Picture from '@/assets/icons/Picture.svg?react';
 import Video from '@/assets/icons/Video.svg?react';
 import Poll from '@/assets/icons/Poll.svg?react';
 import { selectPostInput, selectPostLoading } from '@/features/post/postSelectors.ts';
 import { setPostInput } from '@/features/post/postSlice.ts';
 import { useState } from 'react';
-import { uploadImage } from '@/api/cloudinary.ts';
+import { cld, uploadImage } from '@/api/cloudinary.ts';
 import type { Media } from '@/types';
 import { useMediaDialog } from '@/hooks';
+import { fill } from '@cloudinary/url-gen/actions/resize';
 
 export function NewPost() {
   const dispatch = useAppDispatch();
-  const photoUrl = useAppSelector(selectUserPhoto);
+  const userId = useAppSelector(selectCurrentUserId);
+  const cacheBuster = useAppSelector(selectAvatarCacheBuster);
   const isFeedLoading = useAppSelector(selectPostLoading);
   const postInput = useAppSelector(selectPostInput);
   const [file, setFile] = useState<File | undefined>();
@@ -52,15 +54,23 @@ export function NewPost() {
   const getButtonIntent = () => {
     return !isFeedLoading && postInput.content.trim() ? 'primary-dark' : 'disabled';
   };
-
+  const avatarImage = cld
+    .image(`users/${userId}/profile`)
+    .resize(fill().width(48).height(48))
+    .format('auto');
+  const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
   return (
     <>
-      <div className="border border-grey-2 bg-bg-3 p-6 flex flex-col gap-4 rounded-xl drop-shadow-bg-3">
+      <Card>
         <div className="flex gap-4">
           <img
-            src={photoUrl}
+            src={freshAvatarUrl}
             className="rounded-full w-12 h-12 object-cover"
             alt="User profile picture"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src =
+                'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
+            }}
           />
           <textarea
             value={postInput.content}
@@ -97,7 +107,7 @@ export function NewPost() {
             {isFeedLoading ? 'Posting...' : 'Post'}
           </Button>
         </div>
-      </div>
+      </Card>
 
       {mediaDialog.isOpen && (
         <MediaDialog

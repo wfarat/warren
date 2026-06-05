@@ -2,22 +2,25 @@ import { IconButton } from '@/components';
 import Heart from '@/assets/icons/Heart.svg?react';
 import type { Comment } from '@/types';
 import { getTimeText } from '@/utils/timeUtils.ts';
-import { postRepo } from '@/api';
+import { cld, postRepo } from '@/api';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
   AddComment,
+  selectAvatarCacheBuster,
   selectCurrentUserId,
   selectPost,
   setCurrentReplies,
   useComments,
 } from '@/features';
 import { useEffect, useState } from 'react';
+import { fill } from '@cloudinary/url-gen/actions/resize';
 
 export function Comment({ id, author, content, likes, createdAt, replies, isReply }: Comment) {
   const dispatch = useAppDispatch();
   const repliesCount = replies.length;
   const { currentPostId: postId, commentIds } = useAppSelector(selectPost);
   const { replies: commentReplies } = useComments();
+  const cacheBuster = useAppSelector(selectAvatarCacheBuster);
   const currentUserId = useAppSelector(selectCurrentUserId);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
@@ -36,9 +39,22 @@ export function Comment({ id, author, content, likes, createdAt, replies, isRepl
       setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
     });
   };
+  const avatarImage = cld
+    .image(`users/${author.userId}/profile`)
+    .resize(fill().width(32).height(32))
+    .format('auto');
+  const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
   return (
     <div className="flex gap-3 w-full">
-      <img className="rounded-full w-8 h-8" src={author.photoUrl} alt={author.displayName} />
+      <img
+        className="rounded-full w-8 h-8"
+        src={freshAvatarUrl}
+        alt={author.displayName}
+        onError={(e) => {
+          (e.target as HTMLImageElement).src =
+            'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
+        }}
+      />
       <div className="flex flex-col gap-2 w-full">
         <div className="bg-bg-3 border border-grey-2 rounded-lg p-3 w-full">
           <div className="flex-between">
