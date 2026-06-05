@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { selectUser, setError, setSuccess, useLogin } from '@/features';
+import { LoginDialog, selectUser, setError, setSuccess, useLogin } from '@/features';
 import Bell from '@/assets/icons/Bell.svg?react';
 import Arrow from '@/assets/icons/Arrow.svg?react';
 import { Button } from '@/components';
@@ -11,7 +11,8 @@ import { fill } from '@cloudinary/url-gen/actions/resize';
 export function UserMenu() {
   const { isAuthenticated, currentUser } = useAppSelector(selectUser);
   const { photo, given_name } = currentUser || {};
-  const { login, logout } = useLogin();
+  const { logout } = useLogin();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -38,9 +39,12 @@ export function UserMenu() {
 
   if (!isAuthenticated) {
     return (
-      <Button size="md" onClick={login}>
-        Log in
-      </Button>
+      <>
+        <Button size="md" onClick={() => setIsDialogOpen(true)}>
+          Log in
+        </Button>
+        <LoginDialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} />
+      </>
     );
   }
 
@@ -59,6 +63,10 @@ export function UserMenu() {
           <AdvancedImage
             cldImg={cld.image(photo.publicId).resize(fill().width(40).height(40))}
             className="rounded-full w-10 h-10"
+            onError={(e: ErrorEvent) => {
+              (e.target as HTMLImageElement).src =
+                'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
+            }}
           />
         )}
         {photo?.url && (

@@ -41,8 +41,12 @@ const userSlice = createSlice({
     triggerAvatarRefresh: (state) => {
       state.avatarCacheBuster = Date.now().toString();
     },
+    setUserName: (state, action: PayloadAction<string>) => {
+      state.currentUser!.name = action.payload;
+    },
   },
 });
 
-export const { setUser, clearUser, setUserLocation, triggerAvatarRefresh } = userSlice.actions;
+export const { setUser, clearUser, setUserLocation, triggerAvatarRefresh, setUserName } =
+  userSlice.actions;
 export const userReducer = userSlice.reducer;

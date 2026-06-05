@@ -4,6 +4,7 @@ import {
   setProfile,
   setProfileLoading,
   setSelectedUserId,
+  setUserName,
   updateProfileSuccess,
 } from '@/features';
 import { uploadImage, userRepo } from '@/api';
@@ -34,7 +35,6 @@ export const updateProfileAction =
   async (dispatch: AppDispatch, getState: () => RootState) => {
     const { profile: profileState } = getState();
     const currentProfileId = profileState.profile.id;
-
     if (!currentProfileId) return;
 
     try {
@@ -56,7 +56,7 @@ export const updateProfileAction =
           url: input.bannerUrl,
         };
       }
-
+      dispatch(setUserName(input.name));
       dispatch(updateProfileSuccess(databasePayload));
 
       await userRepo.updateUserProfile(currentProfileId, databasePayload);

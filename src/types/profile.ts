@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export type Photo = {
   url?: string;
   publicId?: string;
@@ -13,6 +15,7 @@ export type Profile = {
   website?: string;
   followers: number;
   following: number;
+  updatedAt?: Timestamp;
 };
 
 export type UpdateProfileInput = {

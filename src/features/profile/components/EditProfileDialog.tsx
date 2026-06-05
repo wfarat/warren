@@ -159,6 +159,10 @@ export function EditProfileDialog({ onClose, onSubmit }: Props) {
                       className="w-full h-full object-cover"
                       src={finalAvatarDisplaySrc}
                       alt=""
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
+                      }}
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex-center text-white text-[10px] font-semibold text-center px-1">
                       Change Photo

@@ -3,7 +3,7 @@ import Name from '@/assets/warren_name.svg?react';
 import SearchIcon from '@/assets/icons/Search.svg?react';
 import Close from '@/assets/icons/Close.svg?react';
 import { Search } from './Search.tsx';
-import { UserMenu } from '@/features/user/UserMenu.tsx';
+import { UserMenu } from '@/features';
 import { useState } from 'react';
 
 export function Header() {

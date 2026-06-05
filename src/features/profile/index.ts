@@ -5,5 +5,6 @@
 export * from "./profileActions";
 export * from "./profileSelectors";
 export * from "./profileSlice";
+export * from "./components/EditProfileDialog";
 export * from "./components/ProfileHero";
 export * from "./components/ProfilePosts";

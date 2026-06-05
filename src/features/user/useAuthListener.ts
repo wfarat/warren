@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore'; // 🌟 Added getDoc
-import { auth, db, uploadProfilePicture } from '@/api';
+import { auth, userRepo } from '@/api';
 import { useAppDispatch } from '@/store';
 import { clearUser, setUser } from '@/features';
-import type { Profile } from '@/types';
 
 export function useAuthListener() {
   const dispatch = useAppDispatch();
@@ -12,37 +10,24 @@ export function useAuthListener() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const userData = {
-          id: firebaseUser.uid,
-          name: firebaseUser.displayName || '',
-          email: firebaseUser.email || '',
-          given_name: firebaseUser.displayName?.split(' ')[0] || '',
-          photo: { url: firebaseUser.photoURL || '', publicId: '' },
-        };
-
         try {
-          const userDocRef = doc(db, 'users', firebaseUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (!userDocSnap.exists()) {
-            await uploadProfilePicture(firebaseUser.photoURL || '', firebaseUser.uid);
-            await setDoc(userDocRef, {
-              name: userData.name,
-              updatedAt: new Date().toISOString(),
-              followers: 0,
-              following: 0,
-            });
-          } else {
-            const profile = userDocSnap.data() as Profile;
-            userData.name = profile.name;
-            userData.given_name = profile.name.split(' ')[0];
-            userData.photo.url = '';
-            userData.photo.publicId = `users/${firebaseUser.uid}/profile`;
-          }
-        } catch (e) {
-          console.error('Could not initialize user document in Firestore:', e);
-        }
+          const profile = await userRepo.initializeUserDocument(firebaseUser);
 
-        dispatch(setUser(userData));
+          const userData = {
+            id: firebaseUser.uid,
+            name: profile.name,
+            email: firebaseUser.email || '',
+            given_name: profile.name.split(' ')[0] || '',
+            photo: {
+              url: '',
+              publicId: `users/${firebaseUser.uid}/profile`,
+            },
+          };
+
+          dispatch(setUser(userData));
+        } catch (e) {
+          console.error('Auth listener failed to process user node profile sync:', e);
+        }
       } else {
         dispatch(clearUser());
       }
