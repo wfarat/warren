@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, userRepo } from '@/api';
-import { useAppDispatch } from '@/store';
-import { clearUser, setUser } from '@/features';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { clearUser, selectCurrentUserId, setSuccess, setUser } from '@/features';
 
 export function useAuthListener() {
   const dispatch = useAppDispatch();
-
+  const currentUserId = useAppSelector(selectCurrentUserId);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
@@ -30,6 +30,9 @@ export function useAuthListener() {
         }
       } else {
         dispatch(clearUser());
+        if (currentUserId) {
+          dispatch(setSuccess('User logged out successfully.'));
+        }
       }
     });
 

@@ -14,7 +14,7 @@ type Props = {
 export const ConnectionCard = ({ connection }: Props) => {
   const avatarImage = cld
     .image(`users/${connection.targetUserId}/profile`)
-    .resize(fill().width(64).height(64))
+    .resize(fill().width(96).height(144))
     .format('auto');
 
   const handleChatClick = (e: React.MouseEvent) => {

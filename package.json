@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "react-router dev",
     "barrels": "barrelsby --config barrelsby.json",
-    "build": "tsc -b && vite build",
+    "build": "react-router build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

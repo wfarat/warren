@@ -73,12 +73,10 @@ export function useLogin() {
   const logout = async () => {
     try {
       await signOut(auth);
-      dispatch(setSuccess('User logged out successfully.'));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'User logout failed.';
       dispatch(setError({ message, retryAction: 'LOGOUT' }));
     }
   };
-
   return { loginWithGoogle, loginWithEmail, registerWithEmail, logout };
 }
