@@ -14,6 +14,7 @@ import {
 } from '@/features';
 import { useEffect, useState } from 'react';
 import { fill } from '@cloudinary/url-gen/actions/resize';
+import { NavLink } from 'react-router';
 
 export function Comment({ id, author, content, likes, createdAt, replies, isReply }: Comment) {
   const dispatch = useAppDispatch();
@@ -46,15 +47,17 @@ export function Comment({ id, author, content, likes, createdAt, replies, isRepl
   const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
   return (
     <div className="flex gap-3 w-full">
-      <img
-        className="rounded-full w-8 h-8"
-        src={freshAvatarUrl}
-        alt={author.displayName}
-        onError={(e) => {
-          (e.target as HTMLImageElement).src =
-            'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
-        }}
-      />
+      <NavLink to={`/profile/${author.userId}`}>
+        <img
+          className="rounded-full w-8 h-8"
+          src={freshAvatarUrl}
+          alt={author.displayName}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src =
+              'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';
+          }}
+        />
+      </NavLink>
       <div className="flex flex-col gap-2 w-full">
         <div className="bg-bg-3 border border-grey-2 rounded-lg p-3 w-full">
           <div className="flex-between">
