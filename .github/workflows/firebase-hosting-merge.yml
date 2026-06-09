@@ -18,7 +18,7 @@ jobs:
       - name: Compile Application
         env:
           VITE_FIREBASE_CONFIG: ${{ secrets.VITE_FIREBASE_CONFIG }}
-          VITE_CLOUDINARY: ${{ secrets.CLOUDINARY }}
+          VITE_CLOUDINARY: ${{ secrets.VITE_CLOUDINARY }}
         run: npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
