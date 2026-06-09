@@ -21,13 +21,15 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/api/firebase';
 import type { Comment, Post } from '@/types';
+import type { FollowerDoc } from '@/types/followers.ts';
 
 /**
  * Fetches the user IDs of everyone following the current user.
  */
 async function getFollowerIds(userId: string): Promise<string[]> {
-  const followersSnap = await getDocs(collection(db, 'users', userId, 'followers'));
-  return followersSnap.docs.map((doc) => doc.id);
+  const followersSnap = await getDoc(doc(db, 'followers', userId));
+  const data = followersSnap.data() as FollowerDoc;
+  return data.list.map((follower) => follower.targetUserId);
 }
 
 export const postRepo = {

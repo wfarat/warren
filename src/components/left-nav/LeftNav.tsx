@@ -15,9 +15,9 @@ export function LeftNav() {
         <NewsIcon />
         Newsfeed
       </NavLink>
-      <NavLink to="/friends" className="flex-start px-4 py-3 gap-2">
+      <NavLink to="/connections" className="flex-start px-4 py-3 gap-2">
         <People />
-        Friends
+        Connections
       </NavLink>
       <NavLink to="/groups" className="flex-start px-4 py-3 gap-2">
         <Grid />

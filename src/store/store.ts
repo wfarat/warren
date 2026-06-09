@@ -3,6 +3,7 @@ import { notificationReducer } from '@/features/notification/notificationSlice';
 import { userReducer } from '@/features/user/userSlice';
 import { postReducer } from '@/features/post/postSlice.ts';
 import { profileReducer } from '@/features/profile/profileSlice.ts';
+import { connectionReducer } from '@/features';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     user: userReducer,
     post: postReducer,
     profile: profileReducer,
+    connections: connectionReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
