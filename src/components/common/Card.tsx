@@ -1,8 +1,15 @@
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
-export function Card({ children }: React.PropsWithChildren) {
+type CardProps = React.ComponentPropsWithoutRef<'div'>;
+export function Card({ children, className }: CardProps) {
   return (
-    <div className="border border-grey-2 bg-bg-3 p-6 relative flex flex-col gap-4 rounded-xl drop-shadow-bg-3">
+    <div
+      className={twMerge(
+        className,
+        'border border-grey-2 bg-bg-3 p-6 relative flex flex-col gap-4 rounded-xl drop-shadow-bg-3'
+      )}
+    >
       {children}
     </div>
   );

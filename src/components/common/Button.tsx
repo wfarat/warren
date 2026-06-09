@@ -11,6 +11,7 @@ const buttonVariants = cva('rounded-lg cursor-pointer transition-colors flex-cen
       grey: 'bg-grey-2 border border-grey-1/20 hover:bg-grey-2 text-on-surface',
       outlined: 'border border-primary text-primary hover:bg-primary hover:text-on-primary',
       disabled: 'bg-grey-3 cursor-not-allowed text-white/40',
+      transparent: 'hover:bg-grey-2',
     },
     size: {
       default: 'h-auto w-auto py-2 px-6',

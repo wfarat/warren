@@ -12,7 +12,7 @@ const toastVariants = cva('flex-center font-base gap-4', {
       success: 'bg-primary-light',
     },
     view: {
-      default: 'rounded-xs p-3.5',
+      default: 'rounded-xl p-3.5',
       mobile: 'flex-col rounded-sm w-75 py-10',
     },
   },

@@ -11,7 +11,7 @@ export const store = configureStore({
     user: userReducer,
     post: postReducer,
     profile: profileReducer,
-    connections: connectionReducer,
+    connection: connectionReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

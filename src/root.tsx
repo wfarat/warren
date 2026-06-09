@@ -2,7 +2,7 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { Header } from '@/components';
-import { Notification, useAuthListener } from '@/features';
+import { Notifications, useAuthListener } from '@/features';
 import { LeftNav } from '@/components/left-nav/LeftNav.tsx';
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -37,9 +37,7 @@ export default function Root() {
         <LeftNav />
         <AppContent />
       </div>
-      <footer className="bg-bg-3 h-1/4 flex-center">
-        <Notification view={'default'} />
-      </footer>
+      <Notifications />
     </Provider>
   );
 }

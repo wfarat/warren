@@ -1,4 +1,4 @@
-import { arrayUnion, doc, getDoc, increment, updateDoc } from 'firebase/firestore';
+import { arrayUnion, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/api';
 import type { FollowerDoc } from '@/types/followers.ts';
 
@@ -29,25 +29,36 @@ export const connectionRepo = {
     await updateDoc(currentUserDocRef, {
       following: increment(1),
     });
+
     const targetDocRef = doc(db, 'users', targetUserId);
     await updateDoc(targetDocRef, {
       followers: increment(1),
     });
+
     const followingDocRef = doc(db, 'following', currentUserId);
-    await updateDoc(followingDocRef, {
-      list: arrayUnion({
-        targetUserId: targetUserId,
-        targetName: targetUserName,
-        createdAt: new Date().toISOString(),
-      }),
-    });
+    await setDoc(
+      followingDocRef,
+      {
+        list: arrayUnion({
+          targetUserId: targetUserId,
+          targetUserName: targetUserName,
+          createdAt: new Date().toISOString(),
+        }),
+      },
+      { merge: true }
+    );
+
     const followersDocRef = doc(db, 'followers', targetUserId);
-    await updateDoc(followersDocRef, {
-      list: arrayUnion({
-        targetUserId: currentUserId,
-        targetName: currentUserName,
-        createdAt: new Date().toISOString(),
-      }),
-    });
+    await setDoc(
+      followersDocRef,
+      {
+        list: arrayUnion({
+          targetUserId: currentUserId,
+          targetUserName: currentUserName,
+          createdAt: new Date().toISOString(),
+        }),
+      },
+      { merge: true }
+    );
   },
 };

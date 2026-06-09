@@ -1,21 +1,24 @@
-import { useAppDispatch, useAppSelector } from '@/store';
-import { clearNotification, selectNotification } from '@/features/notification';
+import { useAppDispatch } from '@/store';
+import { type NotificationData, removeNotification } from '@/features/notification';
 import { Toast } from '@/components';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRetryAction } from '@/hooks';
 
 type NotificationProps = React.HTMLAttributes<HTMLDivElement> & {
   view: 'default' | 'mobile';
+  notification: NotificationData;
 };
 
-export function Notification({ view, className }: NotificationProps) {
-  const notification = useAppSelector(selectNotification);
+export function Notification({ view, className, notification }: NotificationProps) {
   const dispatch = useAppDispatch();
   const getCallback = useRetryAction();
   const retryCallback = getCallback(notification.retryAction);
 
+  useEffect(() => {
+    setTimeout(() => dispatch(removeNotification(notification.id)), 5000);
+  }, []);
   const handleClose = () => {
-    dispatch(clearNotification());
+    dispatch(removeNotification(notification.id));
   };
 
   const handleRetry = () => {
@@ -27,7 +30,6 @@ export function Notification({ view, className }: NotificationProps) {
       type={notification.type}
       view={view}
       className={className}
-      hidden={!notification.visible}
       message={notification.message}
       retryCallback={handleRetry}
       showRetry={retryCallback !== undefined}

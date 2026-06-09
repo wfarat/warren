@@ -1,16 +1,20 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from '@/store';
 
-type NotificationState = {
+export type NotificationData = {
+  id: string;
   message: string;
-  type?: 'error' | 'success';
-  visible: boolean;
+  type: 'error' | 'success';
   retryAction?: string;
   payload?: Record<string, unknown>;
 };
 
+type NotificationState = {
+  notifications: NotificationData[];
+};
+
 const initialState: NotificationState = {
-  message: '',
-  visible: false,
+  notifications: [],
 };
 
 const notificationSlice = createSlice({
@@ -18,11 +22,13 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     setSuccess: (state, action: PayloadAction<string>) => {
-      state.message = action.payload;
-      state.type = 'success';
-      state.visible = true;
-      state.retryAction = undefined;
+      state.notifications.push({
+        id: Math.random().toString(36).substring(2, 9) + Date.now().toString(),
+        message: action.payload,
+        type: 'success',
+      });
     },
+
     setError: (
       state,
       action: PayloadAction<{
@@ -31,21 +37,30 @@ const notificationSlice = createSlice({
         payload?: Record<string, unknown>;
       }>
     ) => {
-      state.message = action.payload.message;
-      state.type = 'error';
-      state.visible = true;
-      state.retryAction = action.payload.retryAction;
-      state.payload = action.payload.payload;
+      state.notifications.push({
+        id: Math.random().toString(36).substring(2, 9) + Date.now().toString(),
+        message: action.payload.message,
+        type: 'error',
+        retryAction: action.payload.retryAction,
+        payload: action.payload.payload,
+      });
     },
-    clearNotification: (state) => {
-      state.message = '';
-      state.type = undefined;
-      state.visible = false;
-      state.retryAction = undefined;
-      state.payload = undefined;
+
+    removeNotification: (state, action: PayloadAction<string>) => {
+      state.notifications = state.notifications.filter(
+        (notification) => notification.id !== action.payload
+      );
+    },
+
+    clearAllNotifications: (state) => {
+      state.notifications = [];
     },
   },
 });
 
-export const { setSuccess, setError, clearNotification } = notificationSlice.actions;
+export const { setSuccess, setError, removeNotification, clearAllNotifications } =
+  notificationSlice.actions;
+
+export const selectNotifications = (state: RootState) => state.notification.notifications;
+
 export const notificationReducer = notificationSlice.reducer;

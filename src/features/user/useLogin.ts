@@ -65,7 +65,7 @@ export function useLogin() {
         friendlyMessage = 'No account associated with this email address.';
       }
 
-      dispatch(setError({ message: friendlyMessage, retryAction: 'LOGIN_EMAIL' }));
+      dispatch(setError({ message: friendlyMessage }));
       throw err;
     }
   };

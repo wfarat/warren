@@ -14,6 +14,9 @@ import { useMediaDialog } from '@/hooks';
 import { useState } from 'react';
 import type { Media } from '@/types';
 import Edit from '@/assets/icons/Edit.svg?react';
+import AddPeople from '@/assets/icons/AddPeople.svg?react';
+import Chat from '@/assets/icons/Chat.svg?react';
+import { followUser } from '@/features/connection/connectionActions.ts';
 
 export function ProfileHero({ openDialog }: { openDialog: () => void }) {
   const { profile } = useAppSelector(selectProfile);
@@ -35,6 +38,12 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
     .resize(fill().width(192).height(192))
     .format('auto');
   const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
+  const handleFollow = () => {
+    dispatch(followUser(profile.id, profile.name));
+  };
+  const handleMessage = () => {
+    // TODO: Implement messaging
+  };
   return (
     <div>
       <div className="w-full h-120 overflow-hidden bg-bg-2 border-b border-grey-2 relative">
@@ -83,10 +92,21 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
         </div>
         <div className="flex-between w-full p-6">
           <h2>{profile.name}</h2>
-          <Button className="gap-2" onClick={openDialog}>
-            <Edit />
-            Edit profile
-          </Button>
+          {profile.id === currentUserId ? (
+            <Button className="gap-2" onClick={openDialog}>
+              <Edit />
+              Edit profile
+            </Button>
+          ) : (
+            <div className="flex gap-4">
+              <Button className="gap-2" onClick={handleFollow}>
+                <AddPeople /> Follow
+              </Button>
+              <Button className="gap-2" intent="grey" onClick={handleMessage}>
+                <Chat /> Message
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       {isOpen && (

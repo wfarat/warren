@@ -22,8 +22,18 @@ export const connectionSlice = createSlice({
       state.pureFollowers = action.payload.pureFollowers;
       state.mutualConnections = action.payload.mutualConnections;
     },
+    addConnection: (state, action: PayloadAction<Follower>) => {
+      if (state.pendingFollowBacks.some((fb) => fb.targetUserId === action.payload.targetUserId)) {
+        state.pendingFollowBacks = state.pendingFollowBacks.filter(
+          (fb) => fb.targetUserId !== action.payload.targetUserId
+        );
+        state.mutualConnections.push(action.payload);
+      } else {
+        state.pendingFollowBacks.push(action.payload);
+      }
+    },
   },
 });
 
-export const { setConnectionState } = connectionSlice.actions;
+export const { setConnectionState, addConnection } = connectionSlice.actions;
 export const connectionReducer = connectionSlice.reducer;
