@@ -21,6 +21,7 @@ export const fetchProfile =
       dispatch(setProfile(response));
     } catch (error) {
       dispatch(setError({ message: 'Failed to fetch profile', retryAction: 'PROFILE' }));
+      console.error('Failed to fetch profile:', error);
     } finally {
       dispatch(setSelectedUserId(userId));
       dispatch(setProfileLoading(false));

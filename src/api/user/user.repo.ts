@@ -10,7 +10,8 @@ export const userRepo = {
   async getUserProfile(userId: string) {
     const userDocRef = doc(db, 'users', userId);
     const snapshot = await getDoc(userDocRef);
-    return snapshot.data() as Profile;
+    const data = snapshot.data();
+    return { ...data, updatedAt: data?.updatedAt.toDate().toISOString() } as Profile;
   },
 
   async initializeUserDocument(firebaseUser: any, customName?: string): Promise<Profile> {
@@ -50,6 +51,9 @@ export const userRepo = {
 
   async updateUserProfile(userId: string, data: Partial<Profile>) {
     const userDocRef = doc(db, 'users', userId);
-    await updateDoc(userDocRef, data);
+    await updateDoc(userDocRef, {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
   },
 };
