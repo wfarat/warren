@@ -11,7 +11,6 @@ import {
   setSuccess,
 } from '@/features';
 import type { Comment, Post, PostInput } from '@/types';
-import { Timestamp } from 'firebase/firestore';
 
 /**
  * Thunk action to pull the next chunk of posts from the repository layer
@@ -105,7 +104,7 @@ export const createPostAction =
       likesCount: 0,
       commentsCount: 0,
       sharesCount: 0,
-      createdAt: Timestamp.fromDate(new Date()),
+      createdAt: new Date().toISOString(),
     };
 
     if (input.media) {
@@ -136,7 +135,7 @@ export const addCommentAction =
         displayName: currentUser.name || 'Anonymous',
       },
       content,
-      createdAt: Timestamp.fromDate(new Date()),
+      createdAt: new Date().toISOString(),
       id: finalCommentId,
       likes: [],
       replies: [],

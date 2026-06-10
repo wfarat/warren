@@ -1,5 +1,3 @@
-import { Timestamp } from 'firebase/firestore';
-
 export type Author = {
   userId: string;
   displayName: string;
@@ -22,7 +20,7 @@ export type Comment = {
   author: Author;
   likes: string[];
   replies: string[];
-  createdAt: Timestamp;
+  createdAt: string;
   isReply?: boolean;
 };
 
@@ -34,7 +32,7 @@ export type Post = PostInput & {
   likesCount: number;
   commentsCount: number;
   sharesCount: number;
-  createdAt: Timestamp;
+  createdAt: string;
 };
 
 export type LivePostInteractions = {

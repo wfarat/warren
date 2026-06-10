@@ -89,14 +89,14 @@ export const postRepo = {
     }
 
     const snapshot = await getDocs(timelineQuery);
-
-    const posts: Post[] = snapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as Post
-    );
+    const posts: Post[] = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString(),
+      } as Post;
+    });
 
     return {
       posts,
@@ -118,13 +118,14 @@ export const postRepo = {
     );
     try {
       const snapshot = await getDocs(profileQuery);
-      return snapshot.docs.map(
-        (doc) =>
-          ({
-            id: doc.id,
-            ...doc.data(),
-          }) as Post
-      );
+      return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate().toISOString(),
+        } as Post;
+      });
     } catch (error) {
       console.error('Error fetching profile posts:', error);
     }
@@ -134,7 +135,12 @@ export const postRepo = {
     const postRef = doc(db, 'posts', postId);
     try {
       const snapshot = await getDoc(postRef);
-      return snapshot.data() as Post;
+      const data = snapshot.data();
+      return {
+        id: snapshot.id,
+        ...data,
+        createdAt: data?.createdAt?.toDate().toISOString(),
+      } as Post;
     } catch (error) {
       console.error('Error fetching post:', error);
     }
@@ -164,7 +170,10 @@ export const postRepo = {
     const masterPostRef = doc(db, 'posts', postId);
     if (!commentId) {
       const commentDocRef = doc(db, 'posts', postId, 'comments', comment.id);
-      await setDoc(commentDocRef, comment);
+      await setDoc(commentDocRef, {
+        ...comment,
+        createdAt: serverTimestamp(),
+      });
     }
     await updateDoc(masterPostRef, {
       commentsCount: increment(1),
@@ -172,7 +181,10 @@ export const postRepo = {
 
     if (commentId) {
       const replyDocRef = doc(db, 'posts', postId, 'replies', comment.id);
-      await setDoc(replyDocRef, comment);
+      await setDoc(replyDocRef, {
+        ...comment,
+        createdAt: serverTimestamp(),
+      });
       if (isReply) {
         const replyRef = doc(db, 'posts', postId, 'replies', commentId);
         await updateDoc(replyRef, {
@@ -220,13 +232,14 @@ export const postRepo = {
   async readComments(postId: string) {
     const commentsCollectionRef = collection(db, 'posts', postId, 'comments');
     const commentsSnapshot = await getDocs(commentsCollectionRef);
-    return commentsSnapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as Comment
-    );
+    return commentsSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString(),
+      } as Comment;
+    });
   },
 
   /**
@@ -243,12 +256,13 @@ export const postRepo = {
 
     const querySnapshot = await getDocs(q);
 
-    return querySnapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as Comment
-    );
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString(),
+      } as Comment;
+    });
   },
 };

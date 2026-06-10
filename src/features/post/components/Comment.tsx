@@ -62,7 +62,7 @@ export function Comment({ id, author, content, likes, createdAt, replies, isRepl
         <div className="bg-bg-3 border border-grey-2 rounded-lg p-3 w-full">
           <div className="flex-between">
             <h4 className="text-sm text-on-surface">{author.displayName}</h4>
-            <span className="text-xs text-grey-1">{getTimeText(createdAt.toDate())} ago</span>
+            <span className="text-xs text-grey-1">{getTimeText(new Date(createdAt))} ago</span>
           </div>
           <p className="text-sm text-on-surface-variant">{content}</p>
         </div>

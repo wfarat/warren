@@ -113,7 +113,7 @@ export function PostCard({ timelinePost, full, onProfile }: PostCardProps) {
             {timelinePost.author.displayName}
           </span>
           <span className="text-xs text-grey-1">
-            {getTimeText(timelinePost.createdAt.toDate())} ago
+            {getTimeText(new Date(timelinePost.createdAt))} ago
           </span>
         </div>
       </div>

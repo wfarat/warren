@@ -72,6 +72,7 @@ export const postSlice = createSlice({
       if (action.payload.parentId) {
         const comment = state.comments.find((c) => c.id === action.payload.parentId);
         comment?.replies.push(action.payload.comment.id);
+        state.replies[action.payload.parentId] = state.replies[action.payload.parentId] || [];
         state.replies[action.payload.parentId].push(action.payload.comment);
         state.commentIds.push(action.payload.parentId);
       } else {
