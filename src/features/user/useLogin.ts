@@ -7,7 +7,7 @@ import {
 } from 'firebase/auth';
 import { auth, userRepo } from '@/api';
 import { useAppDispatch } from '@/store';
-import { setError, setSuccess } from '@/features';
+import { setError, setRegistering, setSuccess, setUser } from '@/features';
 
 export function useLogin() {
   const dispatch = useAppDispatch();
@@ -15,11 +15,23 @@ export function useLogin() {
   const registerWithEmail = async (email: string, password: string, name: string) => {
     try {
       if (!email || !password || !name) throw new Error('All fields are required.');
-
+      dispatch(setRegistering(true));
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
 
-      await userRepo.initializeUserDocument(userCredential.user, name);
+      const profile = await userRepo.initializeUserDocument(userCredential.user, name);
 
+      const userData = {
+        id: profile.id,
+        name,
+        email,
+        given_name: name.split(' ')[0] || '',
+        photo: {
+          url: '',
+          publicId: `users/${profile.id}/profile`,
+        },
+      };
+
+      dispatch(setUser(userData));
       dispatch(setSuccess('Account created successfully!'));
     } catch (err) {
       const errorInstance = err as { code?: string; message?: string };
@@ -28,7 +40,10 @@ export function useLogin() {
         friendlyMessage = 'This email address is already registered.';
       }
       dispatch(setError({ message: friendlyMessage, retryAction: 'REGISTER' }));
+      dispatch(setRegistering(false));
       throw err;
+    } finally {
+      dispatch(setRegistering(false));
     }
   };
 

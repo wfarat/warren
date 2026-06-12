@@ -1,4 +1,4 @@
-import { arrayUnion, doc, getDoc, increment, setDoc, updateDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, getDoc, increment, setDoc, updateDoc, writeBatch, } from 'firebase/firestore';
 import { db } from '@/api';
 import type { FollowerDoc } from '@/types/followers.ts';
 
@@ -42,7 +42,6 @@ export const connectionRepo = {
         list: arrayUnion({
           targetUserId: targetUserId,
           targetUserName: targetUserName,
-          createdAt: new Date().toISOString(),
         }),
       },
       { merge: true }
@@ -55,10 +54,43 @@ export const connectionRepo = {
         list: arrayUnion({
           targetUserId: currentUserId,
           targetUserName: currentUserName,
-          createdAt: new Date().toISOString(),
         }),
       },
       { merge: true }
     );
+  },
+  async unfollowUser(
+    currentUserId: string,
+    currentUserName: string, // Assumes this matches exactly what is stored
+    targetUserId: string,
+    targetUserName: string // Assumes this matches exactly what is stored
+  ) {
+    // 1. Initialize a batch
+    const batch = writeBatch(db);
+
+    const currentUserDocRef = doc(db, 'users', currentUserId);
+    const targetDocRef = doc(db, 'users', targetUserId);
+    const followingDocRef = doc(db, 'following', currentUserId);
+    const followersDocRef = doc(db, 'followers', targetUserId);
+
+    // 2. Queue all operations into the batch
+    batch.update(currentUserDocRef, { following: increment(-1) });
+    batch.update(targetDocRef, { followers: increment(-1) });
+
+    batch.update(followingDocRef, {
+      list: arrayRemove({
+        targetUserId: targetUserId,
+        targetUserName: targetUserName,
+      }),
+    });
+
+    batch.update(followersDocRef, {
+      list: arrayRemove({
+        targetUserId: currentUserId,
+        targetUserName: currentUserName,
+      }),
+    });
+
+    await batch.commit();
   },
 };

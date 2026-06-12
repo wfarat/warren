@@ -23,8 +23,8 @@ export const connectionSlice = createSlice({
       state.mutualConnections = action.payload.mutualConnections;
     },
     addConnection: (state, action: PayloadAction<Follower>) => {
-      if (state.pendingFollowBacks.some((fb) => fb.targetUserId === action.payload.targetUserId)) {
-        state.pendingFollowBacks = state.pendingFollowBacks.filter(
+      if (state.pureFollowers.some((fb) => fb.targetUserId === action.payload.targetUserId)) {
+        state.pureFollowers = state.pureFollowers.filter(
           (fb) => fb.targetUserId !== action.payload.targetUserId
         );
         state.mutualConnections.push(action.payload);

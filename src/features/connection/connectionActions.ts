@@ -1,6 +1,7 @@
 import type { AppDispatch, RootState } from '@/store';
 import { connectionRepo } from '@/api/connection/connection.repo.ts';
 import { addConnection, setConnectionState, setError, setSuccess } from '@/features';
+import type { UserListItem } from '@/types';
 
 export const fetchConnections = () => async (dispatch: AppDispatch, getState: () => RootState) => {
   const { user } = getState();
@@ -28,5 +29,24 @@ export const followUser =
     } catch (error) {
       dispatch(setError({ message: 'Failed to follow user' }));
       console.error('Failed to follow user:', error);
+    }
+  };
+
+export const followUsers =
+  (users: UserListItem[]) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const { user } = getState();
+    const currentUserId = user.currentUser?.id;
+    const currentUserName = user.currentUser?.name;
+    if (!currentUserId || !currentUserName) return;
+    try {
+      const promises = users.map(async (user) => {
+        await connectionRepo.followUser(currentUserId, currentUserName, user.id, user.name);
+        dispatch(addConnection({ targetUserId: user.id, targetUserName: user.name }));
+      });
+      await Promise.all(promises);
+      dispatch(setSuccess('Users followed successfully!'));
+    } catch (error) {
+      dispatch(setError({ message: 'Failed to follow users' }));
+      console.error('Failed to follow users:', error);
     }
   };

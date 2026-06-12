@@ -1,6 +1,17 @@
 import { db } from '@/api';
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
-import type { Profile } from '@/types';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import type { Profile, UserListItem } from '@/types';
 
 export const userRepo = {
   /**
@@ -14,6 +25,29 @@ export const userRepo = {
     return { ...data, updatedAt: data?.updatedAt.toDate().toISOString() } as Profile;
   },
 
+  async fetchUserList(filter?: string): Promise<UserListItem[]> {
+    const usersRef = collection(db, 'users');
+    let q;
+
+    if (filter) {
+      q = query(
+        usersRef,
+        where('name', '>=', filter),
+        where('name', '<=', filter + '\uf8ff'),
+        orderBy('name')
+      );
+    } else {
+      q = query(usersRef, orderBy('name'));
+    }
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      name: doc.data().name || '',
+    }));
+  },
+
   async initializeUserDocument(firebaseUser: any, customName?: string): Promise<Profile> {
     const userDocRef = doc(db, 'users', firebaseUser.uid);
     const userDocSnap = await getDoc(userDocRef);
@@ -21,8 +55,7 @@ export const userRepo = {
     if (userDocSnap.exists()) {
       return userDocSnap.data() as Profile;
     }
-
-    const finalName = customName?.trim() || firebaseUser.displayName || 'Anonymous';
+    const finalName = customName?.trim() || firebaseUser.displayName;
 
     const newProfile: Profile = {
       id: firebaseUser.uid,

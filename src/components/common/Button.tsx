@@ -10,6 +10,8 @@ const buttonVariants = cva('rounded-lg cursor-pointer transition-colors flex-cen
       secondary: 'bg-secondary-container/20 hover:bg-secondary-container/40 text-secondary-light',
       grey: 'bg-grey-2 border border-grey-1/20 hover:bg-grey-2 text-on-surface',
       outlined: 'border border-primary text-primary hover:bg-primary hover:text-on-primary',
+      danger:
+        'border text-danger-dark border-danger-light hover:bg-danger-light hover:text-on-surface',
       disabled: 'bg-grey-3 cursor-not-allowed text-white/40',
       transparent: 'hover:bg-grey-2',
     },

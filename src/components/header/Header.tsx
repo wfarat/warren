@@ -5,14 +5,20 @@ import Close from '@/assets/icons/Close.svg?react';
 import { Search } from './Search.tsx';
 import { UserMenu } from '@/features';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import type { UserListItem } from '@/types';
 
 export function Header() {
   const [showSearch, setShowSearch] = useState(false);
+  const navigate = useNavigate();
+  const handleSearch = (person: UserListItem) => {
+    navigate(`/profile/${person.id}`);
+  };
   return (
     <header className=" bg-bg-2 max-w-360 mx-auto flex-between p-3 fixed top-0 left-0 right-0 z-10 border-b border-x border-grey-2">
       {showSearch ? (
         <div className="flex-center gap-3 w-full">
-          <Search className="w-full" />
+          <Search className="w-full" onChoose={handleSearch} />
           <Close className="w-6 h-6 fill-grey-1" onClick={() => setShowSearch(false)} />
         </div>
       ) : (
@@ -21,7 +27,7 @@ export function Header() {
             <Logo />
             <Name className="sm:block hidden" />
           </div>
-          <Search className="sm:block hidden" />
+          <Search className="sm:block hidden" onChoose={handleSearch} />
           <div className="flex-center gap-3">
             <SearchIcon
               className="sm:hidden block w-6 h-6"

@@ -11,7 +11,7 @@ import {
   triggerAvatarRefresh,
 } from '@/features';
 import { useMediaDialog } from '@/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Media } from '@/types';
 import Edit from '@/assets/icons/Edit.svg?react';
 import AddPeople from '@/assets/icons/AddPeople.svg?react';
@@ -23,6 +23,7 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
   const [file, setFile] = useState<File | undefined>();
   const cacheBuster = useAppSelector(selectAvatarCacheBuster);
   const currentUserId = useAppSelector(selectCurrentUserId);
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
   const { open, close, isOpen } = useMediaDialog();
   const dispatch = useAppDispatch();
   const handlePhoto = async (media: Media) => {
@@ -33,11 +34,15 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
     }
     dispatch(triggerAvatarRefresh());
   };
-  const avatarImage = cld
-    .image(`users/${profile.id}/profile`)
-    .resize(fill().width(192).height(192))
-    .format('auto');
-  const freshAvatarUrl = `${avatarImage.toURL()}?v=${cacheBuster}`;
+  useEffect(() => {
+    setAvatarUrl(
+      cld
+        .image(`users/${profile.id}/profile`)
+        .resize(fill().width(192).height(192))
+        .format('auto')
+        .toURL() + `?v=${cacheBuster}`
+    );
+  }, [cacheBuster, profile.id, currentUserId]);
   const handleFollow = () => {
     dispatch(followUser(profile.id, profile.name));
   };
@@ -73,7 +78,7 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
             <img
               alt=""
               className="rounded-xl border-4 border-bg-2 shadow-xl w-full h-full   "
-              src={freshAvatarUrl}
+              src={avatarUrl}
               onError={(e) => {
                 (e.target as HTMLImageElement).src =
                   'https://res.cloudinary.com/dtz3qhhlp/image/upload/v1780652522/placeholder.jpg';

@@ -14,6 +14,7 @@ interface UserState {
   isAuthenticated: boolean;
   avatarCacheBuster: string;
   location: { lat: number; lng: number };
+  isRegistering?: boolean;
 }
 
 const initialState: UserState = {
@@ -44,9 +45,18 @@ const userSlice = createSlice({
     setUserName: (state, action: PayloadAction<string>) => {
       state.currentUser!.name = action.payload;
     },
+    setRegistering: (state, action: PayloadAction<boolean>) => {
+      state.isRegistering = action.payload;
+    },
   },
 });
 
-export const { setUser, clearUser, setUserLocation, triggerAvatarRefresh, setUserName } =
-  userSlice.actions;
+export const {
+  setUser,
+  clearUser,
+  setUserLocation,
+  triggerAvatarRefresh,
+  setUserName,
+  setRegistering,
+} = userSlice.actions;
 export const userReducer = userSlice.reducer;

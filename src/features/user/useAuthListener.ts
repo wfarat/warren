@@ -2,14 +2,21 @@ import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, userRepo } from '@/api';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { clearUser, selectCurrentUserId, setSuccess, setUser } from '@/features';
+import {
+  clearUser,
+  selectCurrentUserId,
+  selectIsRegistering,
+  setSuccess,
+  setUser,
+} from '@/features';
 
 export function useAuthListener() {
   const dispatch = useAppDispatch();
   const currentUserId = useAppSelector(selectCurrentUserId);
+  const isRegistering = useAppSelector(selectIsRegistering);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
+      if (firebaseUser && !isRegistering) {
         try {
           const profile = await userRepo.initializeUserDocument(firebaseUser);
 
