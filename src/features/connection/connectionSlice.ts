@@ -32,8 +32,16 @@ export const connectionSlice = createSlice({
         state.pendingFollowBacks.push(action.payload);
       }
     },
+    removeConnection: (state, action: PayloadAction<Follower>) => {
+      state.mutualConnections = state.mutualConnections.filter(
+        (fb) => fb.targetUserId !== action.payload.targetUserId
+      );
+      state.pendingFollowBacks = state.pendingFollowBacks.filter(
+        (fb) => fb.targetUserId !== action.payload.targetUserId
+      );
+    },
   },
 });
 
-export const { setConnectionState, addConnection } = connectionSlice.actions;
+export const { setConnectionState, addConnection, removeConnection } = connectionSlice.actions;
 export const connectionReducer = connectionSlice.reducer;

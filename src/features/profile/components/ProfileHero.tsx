@@ -5,16 +5,19 @@ import { Button, MediaDialog } from '@/components';
 import Camera from '@/assets/icons/Camera.svg?react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
+  checkFollowStatus,
   selectAvatarCacheBuster,
   selectCurrentUserId,
   selectProfile,
   triggerAvatarRefresh,
+  unfollowUser,
 } from '@/features';
 import { useMediaDialog } from '@/hooks';
 import { useEffect, useState } from 'react';
 import type { Media } from '@/types';
 import Edit from '@/assets/icons/Edit.svg?react';
 import AddPeople from '@/assets/icons/AddPeople.svg?react';
+import RemovePeople from '@/assets/icons/RemovePeople.svg?react';
 import Chat from '@/assets/icons/Chat.svg?react';
 import { followUser } from '@/features/connection/connectionActions.ts';
 
@@ -43,8 +46,16 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
         .toURL() + `?v=${cacheBuster}`
     );
   }, [cacheBuster, profile.id, currentUserId]);
+  useEffect(() => {
+    if (!currentUserId) return;
+    dispatch(checkFollowStatus());
+  }, [currentUserId, profile.id]);
   const handleFollow = () => {
-    dispatch(followUser(profile.id, profile.name));
+    if (profile.followedByMe) {
+      dispatch(unfollowUser(profile.id, profile.name));
+    } else {
+      dispatch(followUser(profile.id, profile.name));
+    }
   };
   const handleMessage = () => {
     // TODO: Implement messaging
@@ -105,7 +116,8 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
           ) : (
             <div className="flex gap-4">
               <Button className="gap-2" onClick={handleFollow}>
-                <AddPeople /> Follow
+                {profile.followedByMe ? <RemovePeople /> : <AddPeople />}
+                {profile.followedByMe ? 'Unfollow' : 'Follow'}
               </Button>
               <Button className="gap-2" intent="grey" onClick={handleMessage}>
                 <Chat /> Message

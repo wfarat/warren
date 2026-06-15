@@ -28,6 +28,12 @@ const profileSlice = createSlice({
     updateProfileSuccess: (state, action: PayloadAction<Partial<Profile>>) => {
       state.profile = { ...state.profile, ...action.payload };
     },
+    updateFollowedByMe: (state, action: PayloadAction<boolean>) => {
+      state.profile = {
+        ...state.profile,
+        followedByMe: action.payload,
+      };
+    },
   },
 });
 
@@ -35,7 +41,8 @@ export const {
   setSelectedUserId,
   setProfile,
   setProfileLoading,
-  updateProfileSuccess, // Export the new action
+  updateProfileSuccess,
+  updateFollowedByMe,
 } = profileSlice.actions;
 
 export const profileReducer = profileSlice.reducer;

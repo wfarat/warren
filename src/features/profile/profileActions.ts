@@ -5,9 +5,10 @@ import {
   setProfileLoading,
   setSelectedUserId,
   setUserName,
+  updateFollowedByMe,
   updateProfileSuccess,
 } from '@/features';
-import { uploadImage, userRepo } from '@/api';
+import { connectionRepo, uploadImage, userRepo } from '@/api';
 import type { Profile, UpdateProfileInput } from '@/types';
 
 export const fetchProfile =
@@ -69,3 +70,16 @@ export const updateProfileAction =
       dispatch(setProfileLoading(false));
     }
   };
+
+export const checkFollowStatus = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+  const { profile, user } = getState();
+  const currentProfileId = profile.profile.id;
+  const currentUserId = user.currentUser?.id;
+  if (!currentUserId || !currentProfileId) return;
+  try {
+    const isFollowing = await connectionRepo.isFollowing(currentUserId, currentProfileId);
+    dispatch(updateFollowedByMe(isFollowing));
+  } catch (error) {
+    console.error('Failed to check follow status:', error);
+  }
+};

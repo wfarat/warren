@@ -4,6 +4,7 @@ import { store } from '@/store';
 import { Header } from '@/components';
 import { Notifications, useAuthListener } from '@/features';
 import { LeftNav } from '@/components/left-nav/LeftNav.tsx';
+import { Messages } from '@/features/message/components/Messages.tsx';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -38,6 +39,7 @@ export default function Root() {
         <AppContent />
       </div>
       <Notifications />
+      <Messages />
     </Provider>
   );
 }

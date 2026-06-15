@@ -1,4 +1,13 @@
-import { arrayRemove, arrayUnion, doc, getDoc, increment, setDoc, updateDoc, writeBatch, } from 'firebase/firestore';
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  increment,
+  setDoc,
+  updateDoc,
+  writeBatch,
+} from 'firebase/firestore';
 import { db } from '@/api';
 import type { FollowerDoc } from '@/types/followers.ts';
 
@@ -92,5 +101,14 @@ export const connectionRepo = {
     });
 
     await batch.commit();
+  },
+
+  async isFollowing(currentUserId: string, targetUserId: string) {
+    const followingDoc = doc(db, 'following', currentUserId);
+
+    const snap = await getDoc(followingDoc);
+    if (!snap.exists()) return false;
+    const data = snap.data() as FollowerDoc;
+    return data.list.some((follower) => follower.targetUserId === targetUserId);
   },
 };

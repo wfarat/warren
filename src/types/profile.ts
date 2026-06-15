@@ -14,6 +14,7 @@ export type Profile = {
   followers: number;
   following: number;
   updatedAt?: string;
+  followedByMe?: boolean;
 };
 
 export type UpdateProfileInput = {
