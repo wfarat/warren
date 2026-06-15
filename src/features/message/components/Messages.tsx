@@ -1,4 +1,4 @@
-import Mail from '@/assets/icons/mail.svg?react';
+import Mail from '@/assets/icons/Mail.svg?react';
 import ArrowStroke from '@/assets/icons/ArrowStroke.svg?react';
 import { createPortal } from 'react-dom';
 import { useEffect } from 'react';

@@ -48,7 +48,7 @@ export default function Connections() {
       </div>
       <RightBar>
         <Card>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 min-h-100">
             <div className="flex-start gap-3">
               <People className="w-6 h-6 fill-on-surface" />
               <h4 className="text-on-surface font-normal text-lg">People You Follow</h4>
