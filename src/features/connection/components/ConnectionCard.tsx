@@ -6,12 +6,15 @@ import { AdvancedImage } from '@cloudinary/react';
 import Chat from '@/assets/icons/Chat.svg?react';
 import { NavLink } from 'react-router';
 import React from 'react';
+import { useAppDispatch } from '@/store';
+import { setActiveChatUser } from '@/features';
 
 type Props = {
   connection: Follower;
 };
 
 export const ConnectionCard = ({ connection }: Props) => {
+  const dispatch = useAppDispatch();
   const avatarImage = cld
     .image(`users/${connection.targetUserId}/profile`)
     .resize(fill().width(96).height(144))
@@ -19,6 +22,12 @@ export const ConnectionCard = ({ connection }: Props) => {
 
   const handleChatClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    dispatch(
+      setActiveChatUser({
+        targetUserId: connection.targetUserId,
+        targetUserName: connection.targetUserName,
+      })
+    );
   };
 
   return (

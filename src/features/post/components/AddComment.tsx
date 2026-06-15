@@ -29,7 +29,7 @@ export function AddComment({ className, commentId, onSubmit, isReply }: Props) {
           placeholder="Write a comment..."
         />
         <Button intent="primary" size="icon" onClick={handleCommentSubmit}>
-          <Send />
+          <Send className="fill-primary-dark" />
         </Button>
       </div>
     </div>

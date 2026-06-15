@@ -5,5 +5,6 @@
 export * from "./cloudinary";
 export * from "./firebase";
 export * from "./connection/connection.repo";
+export * from "./messages/messages.repo";
 export * from "./post/post.repo";
 export * from "./user/user.repo";

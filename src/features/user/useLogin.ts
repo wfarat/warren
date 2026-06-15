@@ -88,6 +88,7 @@ export function useLogin() {
   const logout = async () => {
     try {
       await signOut(auth);
+      dispatch({ type: 'auth/logout' });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'User logout failed.';
       dispatch(setError({ message, retryAction: 'LOGOUT' }));

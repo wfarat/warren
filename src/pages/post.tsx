@@ -18,7 +18,7 @@ export default function Post() {
   });
   return (
     <main className="w-full flex">
-      <div className="p-6">
+      <div className="p-6 flex-1">
         {currentPost ? <PostCard full timelinePost={currentPost} /> : <div>Loading post...</div>}
       </div>
       <RightBar withBorder={!!currentPostId}>{currentPostId && <Comments />}</RightBar>

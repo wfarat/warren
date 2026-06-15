@@ -1,18 +1,27 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore, type UnknownAction } from '@reduxjs/toolkit';
 import { notificationReducer } from '@/features/notification/notificationSlice';
 import { userReducer } from '@/features/user/userSlice';
 import { postReducer } from '@/features/post/postSlice.ts';
 import { profileReducer } from '@/features/profile/profileSlice.ts';
-import { connectionReducer } from '@/features';
+import { connectionReducer, messagesReducer } from '@/features';
+
+const appReducer = combineReducers({
+  notification: notificationReducer,
+  user: userReducer,
+  post: postReducer,
+  profile: profileReducer,
+  connection: connectionReducer,
+  messages: messagesReducer,
+});
+const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: UnknownAction) => {
+  if (action.type === 'auth/logout') {
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
 
 export const store = configureStore({
-  reducer: {
-    notification: notificationReducer,
-    user: userReducer,
-    post: postReducer,
-    profile: profileReducer,
-    connection: connectionReducer,
-  },
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

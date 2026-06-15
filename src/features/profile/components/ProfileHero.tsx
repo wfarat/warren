@@ -9,6 +9,7 @@ import {
   selectAvatarCacheBuster,
   selectCurrentUserId,
   selectProfile,
+  setActiveChatUser,
   triggerAvatarRefresh,
   unfollowUser,
 } from '@/features';
@@ -58,7 +59,7 @@ export function ProfileHero({ openDialog }: { openDialog: () => void }) {
     }
   };
   const handleMessage = () => {
-    // TODO: Implement messaging
+    dispatch(setActiveChatUser({ targetUserId: profile.id, targetUserName: profile.name }));
   };
   return (
     <div>
