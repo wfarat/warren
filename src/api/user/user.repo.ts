@@ -1,4 +1,4 @@
-import { db } from '@/api';
+import { auth, db } from '@/api';
 import {
   collection,
   doc,
@@ -12,6 +12,7 @@ import {
   where,
 } from 'firebase/firestore';
 import type { Profile, UserListItem } from '@/types';
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 
 export const userRepo = {
   /**
@@ -88,5 +89,15 @@ export const userRepo = {
       ...data,
       updatedAt: serverTimestamp(),
     });
+  },
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const user = auth.currentUser;
+    if (!user || !user.email) {
+      throw new Error('No authenticated user found.');
+    }
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    await reauthenticateWithCredential(user, credential);
+    await updatePassword(user, newPassword);
   },
 };

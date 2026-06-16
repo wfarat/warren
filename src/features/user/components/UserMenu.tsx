@@ -7,10 +7,12 @@ import { Button } from '@/components';
 import { AdvancedImage } from '@cloudinary/react';
 import { cld } from '@/api';
 import { fill } from '@cloudinary/url-gen/actions/resize';
+import { useNavigate } from 'react-router';
 
 export function UserMenu() {
   const { isAuthenticated, currentUser } = useAppSelector(selectUser);
   const { photo, given_name } = currentUser || {};
+  const navigate = useNavigate();
   const { logout } = useLogin();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -84,7 +86,7 @@ export function UserMenu() {
             className="block w-full px-4 py-3 text-left hover:bg-bg-3 rounded-t-lg"
             onClick={() => {
               setIsOpen(false);
-              // navigate('/settings');
+              navigate('/settings');
             }}
           >
             Settings
