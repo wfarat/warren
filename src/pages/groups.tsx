@@ -3,6 +3,7 @@ import { createGroupAction, CreateGroupDialog, DiscoverGroups, MyGroups } from '
 import { useState } from 'react';
 import { useAppDispatch } from '@/store';
 import type { CreateGroupData } from '@/types';
+import { FilterTagsCard } from '@/features/group/components/FilterTagsCard.tsx';
 
 export default function Groups() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -22,8 +23,8 @@ export default function Groups() {
         <MyGroups />
         <DiscoverGroups />
       </div>
-      <RightBar withBorder className="bg-bg-2">
-        das{' '}
+      <RightBar withBorder className="bg-bg-2 p-8">
+        <FilterTagsCard />
       </RightBar>
       {dialogOpen && (
         <CreateGroupDialog onClose={() => setDialogOpen(false)} onSubmit={handleCreateGroup} />

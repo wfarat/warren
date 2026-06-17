@@ -14,6 +14,9 @@ import {
 import type { Group } from '@/types';
 
 export const groupsRepo = {
+  generateNewGroupId(): string {
+    return doc(collection(db, 'groups')).id;
+  },
   /**
    * Fetches a single group document by its ID
    */
@@ -44,10 +47,14 @@ export const groupsRepo = {
     }
 
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    })) as Group[];
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        ...data,
+        createdAt: data.createdAt.toDate().toISOString(),
+        id: doc.id,
+      };
+    }) as Group[];
   },
 
   /**
@@ -58,10 +65,14 @@ export const groupsRepo = {
     const q = query(groupsRef, where('members', 'array-contains', userId));
 
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    })) as Group[];
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        ...data,
+        createdAt: data.createdAt.toDate().toISOString(),
+        id: doc.id,
+      };
+    }) as Group[];
   },
 
   /**
@@ -79,31 +90,11 @@ export const groupsRepo = {
    * Commits a freshly designed group metadata node to Firestore
    * Expects tags from your dialog to be split into an array before processing.
    */
-  async createGroup(
-    creatorId: string,
-    data: {
-      name: string;
-      description: string;
-      tagsString: string; // "study, coding, math"
-      bannerUrl?: string;
-      bannerPublicId?: string;
-    }
-  ): Promise<void> {
+  async createGroup(data: Group): Promise<void> {
     const newGroupRef = doc(collection(db, 'groups'));
 
-    const processedTags = data.tagsString
-      .split(',')
-      .map((tag) => tag.trim().toLowerCase())
-      .filter((tag) => tag.length > 0);
-
     const groupPayload = {
-      name: data.name.trim(),
-      description: data.description.trim(),
-      tags: processedTags,
-      bannerUrl: data.bannerUrl || '',
-      bannerPublicId: data.bannerPublicId || '',
-      creatorId,
-      members: [creatorId],
+      ...data,
       createdAt: serverTimestamp(),
     };
 

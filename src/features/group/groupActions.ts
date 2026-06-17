@@ -6,7 +6,8 @@ import {
   setDiscoverGroups,
   setError,
   setGroupsLoading,
-  setMyGroups
+  setMyGroups,
+  setSuccess,
 } from '@/features';
 import type { CreateGroupData } from '@/types';
 
@@ -70,15 +71,25 @@ export const createGroupAction =
       if (values.bannerFile) {
         bannerPublicId = await uploadImage(values.bannerFile);
       }
+      const processedTags = values.tags
+        .split(',')
+        .map((tag) => tag.trim().toLowerCase())
+        .filter((tag) => tag.length > 0);
 
-      await groupsRepo.createGroup(currentUserId, {
+      const groupData = {
+        id: groupsRepo.generateNewGroupId(),
         name: values.name,
         description: values.description,
-        tagsString: values.tags,
+        tags: processedTags,
         bannerUrl,
         bannerPublicId,
-      });
-
+        creatorId: currentUserId,
+        members: [currentUserId],
+        createdAt: new Date().toISOString(),
+      };
+      await groupsRepo.createGroup(groupData);
+      dispatch(appendJoinedGroup(groupData));
+      dispatch(setSuccess('Group created successfully'));
       if (onSuccess) onSuccess();
     } catch (error) {
       dispatch(setError({ message: 'Failed to create group.' }));

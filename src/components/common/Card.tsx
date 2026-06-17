@@ -8,9 +8,9 @@ export function Card({ children, className, orientation }: CardProps) {
   return (
     <div
       className={twMerge(
-        className,
         orientation === 'vertical' ? 'w-full flex-row' : 'flex-col',
-        'border border-grey-2 bg-bg-3 p-6 relative flex gap-4 rounded-xl drop-shadow-bg-3'
+        'border border-grey-2 bg-bg-3 p-6 relative flex gap-4 rounded-xl drop-shadow-bg-3',
+        className
       )}
     >
       {children}

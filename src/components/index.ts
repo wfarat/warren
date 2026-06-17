@@ -6,6 +6,7 @@ export * from "./common/Button";
 export * from "./common/Card";
 export * from "./common/IconButton";
 export * from "./common/Input";
+export * from "./common/Tag";
 export * from "./common/Toast";
 export * from "./common/dialog/Dialog";
 export * from "./common/right-bar/RightBar";
