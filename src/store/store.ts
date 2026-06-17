@@ -3,7 +3,7 @@ import { notificationReducer } from '@/features/notification/notificationSlice';
 import { userReducer } from '@/features/user/userSlice';
 import { postReducer } from '@/features/post/postSlice.ts';
 import { profileReducer } from '@/features/profile/profileSlice.ts';
-import { connectionReducer, messagesReducer } from '@/features';
+import { connectionReducer, groupReducer, messagesReducer } from '@/features';
 
 const appReducer = combineReducers({
   notification: notificationReducer,
@@ -12,6 +12,7 @@ const appReducer = combineReducers({
   profile: profileReducer,
   connection: connectionReducer,
   messages: messagesReducer,
+  group: groupReducer,
 });
 const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: UnknownAction) => {
   if (action.type === 'auth/logout') {

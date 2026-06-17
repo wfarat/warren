@@ -11,7 +11,6 @@
 @theme {
     --font-base: 'Liberation Serif', serif;
     --font-heading: 'Liberation Serif', serif;
-    --letter-spacing-base: 0.15px;
 
     --color-on-surface: #e7e0ef;
     --color-on-surface-variant: #cbc3d9;
@@ -78,6 +77,7 @@
     h5 {
         @apply font-heading font-bold;
         font-size: 24px;
+        letter-spacing: var(--letter-spacing-base);
     }
 
     h5 {
