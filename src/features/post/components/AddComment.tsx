@@ -21,7 +21,7 @@ export function AddComment({ className, commentId, onSubmit, isReply }: Props) {
   };
   return (
     <div className={className}>
-      <div className="flex items-end bg-bg-3 p-3 rounded-lg h-20 border border-grey-2">
+      <div className="flex items-end bg-bg-3 p-3 mb-10 rounded-lg h-20 border border-grey-2">
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
