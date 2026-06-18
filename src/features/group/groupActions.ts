@@ -37,7 +37,7 @@ export const fetchDiscoverableGroupsAction =
   () => async (dispatch: AppDispatch, getState: () => RootState) => {
     const { group, user } = getState();
 
-    if ((group.discoverGroups.length > 0 && !group.tagFilter) || !user.currentUser?.id) return;
+    if (!user.currentUser?.id) return;
 
     dispatch(setGroupsLoading(true));
     try {

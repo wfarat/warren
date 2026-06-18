@@ -1,8 +1,11 @@
-import { useAppSelector } from '@/store';
-import { Chat, RecentChatsInbox, selectMessages } from '@/features';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { Chat, RecentChatsInbox, selectMessages, clearActiveChat } from '@/features';
+import { ErrorBoundary } from '@/components';
 
 export function ChatContainer() {
+  const dispatch = useAppDispatch();
   const { activeChatUser, isOpen } = useAppSelector(selectMessages);
+
   return (
     <div
       className={`
@@ -10,7 +13,16 @@ export function ChatContainer() {
         ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}
       `}
     >
-      <div className="overflow-hidden">{activeChatUser ? <Chat /> : <RecentChatsInbox />}</div>
+      <div className="overflow-hidden">
+        <ErrorBoundary
+          key={activeChatUser?.targetUserId || 'inbox'}
+          onReset={() => {
+            dispatch(clearActiveChat());
+          }}
+        >
+          {activeChatUser ? <Chat /> : <RecentChatsInbox />}
+        </ErrorBoundary>
+      </div>
     </div>
   );
 }

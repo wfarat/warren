@@ -67,7 +67,8 @@ export const messagesRepo = {
   subscribeToMessages(
     userIdOne: string,
     userIdTwo: string,
-    callback: (messages: Message[]) => void
+    callback: (messages: Message[]) => void,
+    errorCallback: (error: Error) => void,
   ) {
     const chatId = this.getChatId(userIdOne, userIdTwo);
     const messagesRef = collection(db, 'chats', chatId, 'messages');
@@ -90,7 +91,7 @@ export const messagesRepo = {
         callback(messages);
       },
       (error) => {
-        console.error('Message room listener failed:', error);
+        errorCallback(error);
       }
     );
   },

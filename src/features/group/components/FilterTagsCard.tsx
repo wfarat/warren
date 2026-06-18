@@ -20,7 +20,7 @@ export function FilterTagsCard() {
   if (availableTags.length === 0 && !tagFilter) return null;
 
   return (
-    <Card className="w-full flex-col p-4 bg-bg-3 border-grey-2 gap-4">
+    <Card className="w-full flex-col p-4 bg-bg-3 border-grey-2 gap-4 min-h-100">
       <div className="flex justify-between items-center w-full">
         <div className="flex flex-col">
           <h4 className="text-white text-sm font-semibold tracking-tight">Filter by Tag</h4>
@@ -38,7 +38,7 @@ export function FilterTagsCard() {
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2 w-full max-h-48 overflow-y-auto pr-1">
+      <div className="flex flex-wrap gap-2 w-full max-h-48 pr-1">
         {availableTags.map((tag) => {
           const isActive = tagFilter === tag;
 

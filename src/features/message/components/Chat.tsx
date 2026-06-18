@@ -27,13 +27,21 @@ export function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const [_, throwError] = useState();
+
   useEffect(() => {
     if (!currentUser?.id || !activeUser?.targetUserId) return;
+
     const unsubscribe = messagesRepo.subscribeToMessages(
       currentUser?.id,
       activeUser?.targetUserId,
       (incomingMessages) => {
         setMessages(incomingMessages);
+      },
+      (error) => {
+        throwError(() => {
+          throw error;
+        });
       }
     );
 

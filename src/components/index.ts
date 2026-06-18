@@ -4,6 +4,7 @@
 
 export * from "./common/Button";
 export * from "./common/Card";
+export * from "./common/ErrorBoundary";
 export * from "./common/IconButton";
 export * from "./common/Input";
 export * from "./common/Tag";
